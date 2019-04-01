@@ -1,3 +1,9 @@
+#
+# Python Homework -2-
+# Class : Python프로그래밍(GEV6103-01)
+# Created by : 백지현, 지동근, hb
+# ==============================================================================
+
 def example_basic_1():
     data = [2.3, 3.5, -5.7, 6.9, -4.2, 8.2, 1.1, -1.5, 3.8, 7.2]
     average = sum(data) / len(data)
@@ -283,6 +289,24 @@ def example_recursions_2(input_param1=None, input_param2=None):
     return "The power of a number using recursion ==>", result, b1, e1
 
 
+def recur_reverse_str(input_string):
+    if len(input_string) == 0:
+        return input_string
+    else:
+        return recur_reverse_str(input_string[1:]) + input_string[0]
+
+
+def example_recursions_3(input_param=None):
+    # Reverse a string using recursion
+
+    if input_param is None:
+        s1 = input("Input string :")
+    else:
+        s1 = input_param
+
+    result = recur_reverse_str(s1)
+    return "Reverse a string using recursion output ==>", result, s1
+
 if __name__ == '__main__':
     print("example_basic_1 ===> ", example_basic_1())
     print("example_basic_2 ===> ", example_basic_2(324))
@@ -309,3 +333,4 @@ if __name__ == '__main__':
     print("###################################################################################")
     print("example_recursions_1 ===> ", example_recursions_1())
     print("example_recursions_2===> ", example_recursions_2(2, 5))
+    print("example_recursions_3===> ", example_recursions_3('Hello world'))
