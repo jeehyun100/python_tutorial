@@ -303,7 +303,6 @@ def example_recursions_3(input_param=None):
         s1 = input("Input string :")
     else:
         s1 = input_param
-
     result = recur_reverse_str(s1)
     return "Reverse a string using recursion output ==>", result, s1
 
