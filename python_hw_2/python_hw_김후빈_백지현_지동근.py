@@ -1,7 +1,7 @@
 #
 # Python Homework -2-
 # Class : Python프로그래밍(GEV6103-01)
-# Created by : 백지현, 지동근, hb
+# Created by : 김후빈, 백지현, 지동근
 # ==============================================================================
 
 def example_basic_1():
