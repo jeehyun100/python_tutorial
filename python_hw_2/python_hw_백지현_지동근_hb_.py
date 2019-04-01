@@ -307,6 +307,7 @@ def example_recursions_3(input_param=None):
     result = recur_reverse_str(s1)
     return "Reverse a string using recursion output ==>", result, s1
 
+
 if __name__ == '__main__':
     print("example_basic_1 ===> ", example_basic_1())
     print("example_basic_2 ===> ", example_basic_2(324))
@@ -332,5 +333,5 @@ if __name__ == '__main__':
     print("example_sets_2 ===> ", example_sets_2('apple', 'bAnAnA'))
     print("###################################################################################")
     print("example_recursions_1 ===> ", example_recursions_1())
-    print("example_recursions_2===> ", example_recursions_2(2, 5))
-    print("example_recursions_3===> ", example_recursions_3('Hello world'))
+    print("example_recursions_2 ===> ", example_recursions_2(2, 5))
+    print("example_recursions_3 ===> ", example_recursions_3('Hello world'))
