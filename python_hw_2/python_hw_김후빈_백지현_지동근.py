@@ -140,8 +140,8 @@ def example_string_1(input_param1=None, input_param2=None):
         s1 = input("Input the first string:")
         s2 = input("Input the 2nd string:")
     else:
-        s1 = input_param1.lower()
-        s2 = input_param2.lower()
+        s1 = input_param1.lower().strip()
+        s2 = input_param2.lower().strip()
 
     if sorted(s1) == sorted(s2):
         result = "The strings are anagrams."
@@ -319,7 +319,7 @@ if __name__ == '__main__':
     print("example_lists_4 ===> ", example_lists_4())
     print("example_lists_5 ===> ", example_lists_5(['apple', 'pear', 'banana', 'strawberry']))
     print("###################################################################################")
-    print("example_string_1 ===> ", example_string_1('Elvis', 'Lives'))
+    print("example_string_1 ===> ", example_string_1('School master','The classroom'))
     print("example_string_2 ===> ", example_string_2('Apple'))
     print("example_string_3 ===> ", example_string_3('I am a boy'))
     print("###################################################################################")
