@@ -4,7 +4,11 @@ from students import Students
 
 class GradeManagement:
     """학점 관리 기본 클래스
+<<<<<<< HEAD
     # StudentCreitsList 클래스와 Students Import하여
+=======
+    StudentCreditsList 클래스와 Students Import하여
+>>>>>>> master
     불러오기, 등록, 삭제의 기능을 수행한다.
     """
     def __init__(self):
@@ -81,6 +85,7 @@ class GradeManagement:
         pass
 
     def modify_an_entry(self):
+<<<<<<< HEAD
         input_description_1="(수정모드) [ID] 또는 [이름]을 하시오 : "
         input_description_2="(수정모드) [중간점수](1) 또는 [기말점수](2)를 선택하시오 : "
         while True:
@@ -115,6 +120,17 @@ class GradeManagement:
         print_s = [ Students(line.replace('\n','').split('\t')) for line in lines_all] #studnet 객체 생성
         print_str_row = StudentCreditsList(print_s)
         print(print_str_row)
+=======
+        # F : ID와 이름으로 학생 찾기
+        pass
+
+
+    def print_the_contents_of_all_entries(self):
+        if len(self._student_credits_list) == 0:
+            print("데이터가 없습니다.")
+        else:
+            print(self._student_credits_list)
+>>>>>>> master
 
     def read_personal_data(self):
         self.file_name = self.check_input_filename()
