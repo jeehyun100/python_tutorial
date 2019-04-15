@@ -108,6 +108,21 @@ class GradeManagement:
             except FileNotFoundError as e:
                 print(repr(e))
             self.print_the_contents_of_all_entries();
+            
+
+            # First Load datafile
+            # r
+            #
+            # ID와 이름으로 대상을 찾아서 해당 row의 index를 가져온다
+            # results = list(filter(lambda item: (item[1]._name == input_value or item[1]._id == input_value),enumerate(self._student_credits_list)))
+            #
+            # how to access student class
+            # for _idx, _r in enumerate(results, 1):
+            #     print("[{0}/{1}] : {2}({3})님의 중간시험 점수 {4}, 기말시험 점수 {5} 는 입니다.".format(_idx, len(results),
+            #                                                                          _r[1]._name,
+            # how to save
+            # _student_credits_list.save()
+
 
     def print_the_contents_of_all_entries(self):
         with open("data.txt",encoding='UTF-8') as f:
