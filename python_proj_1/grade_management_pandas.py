@@ -174,11 +174,6 @@ class GradeManagementPandas(GradeManagement):
         with open(filename, 'w') as OUT:
             OUT.write(self.student_list.to_string(header=False, index_names=False))
 
-    def run(self):
-        self.read_personal_data()
-        self.sort_entries()
-        self.print_the_contents_of_all_entries()
-
 def main(args):
     if args.pandas:
         GradeManagementPandas().run()
