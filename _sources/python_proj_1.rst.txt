@@ -5,6 +5,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 2
 
    python_proj_1.grade_management
    python_proj_1.student_credits_list

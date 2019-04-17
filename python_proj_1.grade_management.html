@@ -151,28 +151,59 @@
 <dt id="python_proj_1.grade_management.GradeManagement">
 <em class="property">class </em><code class="descclassname">python_proj_1.grade_management.</code><code class="descname">GradeManagement</code><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>학점 관리 기본 클래스
-# StudentCreitsList 클래스와 Students Import하여
-불러오기, 등록, 삭제의 기능을 수행한다.</p>
+<p>Manage the student’s credits</p>
+<p>The “GradeManagement” class manage student’s credits.
+This class have functions add, delete, find, modify, print
+, read, sort, quit, write files.</p>
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.add_a_new_entry">
 <code class="descname">add_a_new_entry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.add_a_new_entry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The function to check if a file is in the directory</p>
+<dl class="simple">
+<dt>Return:</dt><dd><p>A type <cite>string</cite> Name if first match file</p>
+</dd>
+<dt>Raises:</dt><dd><p>FileNotFoundError: If file is not existing in the directory.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.check_input">
 <code class="descname">check_input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.check_input" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Check input value
+Only can input A, D, F, M, P, R, S, Q, W</p>
+<dl class="simple">
+<dt>Raises:</dt><dd><p>ValueError: If input value has the wrong.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.check_input_ext">
 <code class="descname">check_input_ext</code><span class="sig-paren">(</span><em>input_description=''</em>, <em>prohibit_list=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.check_input_ext" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Check input value using prohibit list</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>input_description: The description text for input value.
+prohibit_list: Ths list of prohibit charactors</p>
+</dd>
+<dt>For example:</dt><dd><p>check_input_ext(‘Please Input only Y, [‘Y’])</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If input value has the wrong.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.check_input_filename">
 <code class="descname">check_input_filename</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.check_input_filename" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The function to check if a file is in the directory</p>
+<dl class="simple">
+<dt>Return:</dt><dd><p>A type <cite>string</cite> Name if first match file</p>
+</dd>
+<dt>Raises:</dt><dd><p>FileNotFoundError: If file is not existing in the directory.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.delete_an_entry">
@@ -192,32 +223,45 @@
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.print_the_contents_of_all_entries">
 <code class="descname">print_the_contents_of_all_entries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.print_the_contents_of_all_entries" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The function to print all student credits</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.read_personal_data">
 <code class="descname">read_personal_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.read_personal_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The function to read data file which is student credit data.</p>
+<blockquote>
+<div><p>Recreate “StudentCreditsList” from the file.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Raises:</dt><dd><p>Exception: While reading file has wrong.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.run">
 <code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.run" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The function to run to start the program.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.show_help_message">
 <code class="descname">show_help_message</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.show_help_message" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Show help message</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.sort_entries">
 <code class="descname">sort_entries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.sort_entries" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The function to sort “StudentCreditsList”.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.write_the_contents_to_the_same_file">
 <code class="descname">write_the_contents_to_the_same_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.write_the_contents_to_the_same_file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The function to save all student credits</p>
+</dd></dl>
 
 </dd></dl>
 
