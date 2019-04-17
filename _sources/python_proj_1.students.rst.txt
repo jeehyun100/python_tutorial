@@ -1,0 +1,7 @@
+python\_proj\_1.students module
+===============================
+
+.. automodule:: python_proj_1.students
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,0 +1,7 @@
+python\_proj\_1.student\_credits\_list module
+=============================================
+
+.. automodule:: python_proj_1.student_credits_list
+    :members:
+    :undoc-members:
+    :show-inheritance:
