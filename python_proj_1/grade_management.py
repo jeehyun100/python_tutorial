@@ -3,16 +3,28 @@ from student_credits_list import StudentCreditsList
 from students import Students
 
 class GradeManagement:
-    """학점 관리 기본 클래스
-    # StudentCreitsList 클래스와 Students Import하여
-    불러오기, 등록, 삭제의 기능을 수행한다.
+    """ Manage the student's credits
+
+    The "GradeManagement" class manage student's credits.
+    This class have functions add, delete, find, modify, print
+    , read, sort, quit, write files.
+
     """
     def __init__(self):
+        """Creates a "GradeManagement"
+           It creates "StudentCreditsList()" and filename variable for saving.
+
+        Args:
+
+        """
         self._student_credits_list = StudentCreditsList()
         self._filename = ''
-        pass
 
     def show_help_message(self):
+        """Show help message
+
+        """
+
         help_message = """
 ######################################################
 (a) (‘A’ 또는 ‘a’) add a new entry
@@ -28,9 +40,14 @@ class GradeManagement:
         """
         print(help_message)
 
-
-
     def check_input(self):
+        """Check input value
+        Only can input A, D, F, M, P, R, S, Q, W
+
+        Raises:
+            ValueError: If input value has the wrong.
+
+        """
         input_description = "Choose one of the options below(Help : h) :     "
 
         while True:
@@ -42,7 +59,18 @@ class GradeManagement:
             except AssertionError as e:
                 print(repr(e))
 
-    def check_input_ext(self, input_description = '', prohibit_list = []):
+    def check_input_ext(self, input_description='', prohibit_list=[]):
+        """Check input value using prohibit list
+
+        Args:
+            input_description: The description text for input value.
+            prohibit_list: Ths list of prohibit charactors
+        For example:
+            check_input_ext('Please Input only Y, ['Y'])
+        Raises:
+            ValueError: If input value has the wrong.
+
+        """
 
         while True:
             try:
@@ -54,6 +82,14 @@ class GradeManagement:
                 print(repr(e))
 
     def check_input_filename(self):
+        """The function to check if a file is in the directory
+
+        Return:
+             A type `string` Name if first match file
+        Raises:
+            FileNotFoundError: If file is not existing in the directory.
+
+        """
         input_description = "현재 디렉토리에 있는 Data 파일을 입력하십시요. :    "
         while True:
             try:
@@ -71,6 +107,14 @@ class GradeManagement:
                 print(repr(e))
 
     def add_a_new_entry(self):
+        """The function to check if a file is in the directory
+
+        Return:
+             A type `string` Name if first match file
+        Raises:
+            FileNotFoundError: If file is not existing in the directory.
+
+        """
         pass
 
     def delete_an_entry(self):
@@ -108,7 +152,7 @@ class GradeManagement:
             except FileNotFoundError as e:
                 print(repr(e))
             self.print_the_contents_of_all_entries();
-            
+
 
             # First Load datafile
             # r
@@ -125,15 +169,28 @@ class GradeManagement:
 
 
     def print_the_contents_of_all_entries(self):
+        """The function to print all student credits
+
+        """
         with open("data.txt",encoding='UTF-8') as f:
             lines_all = f.readlines()
-        print_s = [ Students(line.replace('\n','').split('\t')) for line in lines_all] #studnet 객체 생성
+        #Create Student class from file
+        print_s = [Students(line.replace('\n','').split('\t')) for line in lines_all]
         print_str_row = StudentCreditsList(print_s)
         print(print_str_row)
 
     def read_personal_data(self):
-        self.file_name = self.check_input_filename()
-        with open(self.file_name) as f:
+        """The function to read data file which is student credit data.
+
+            Recreate "StudentCreditsList" from the file.
+
+        Raises:
+            Exception: While reading file has wrong.
+
+        """
+
+        self._filename = self.check_input_filename()
+        with open(self._filename) as f:
             lines_all = f.readlines()
         try:
             data = [Students(line.replace('\n', '').split('\t')) for line in lines_all]
@@ -143,13 +200,22 @@ class GradeManagement:
             print("Data file 을 읽다가 오류가 발생했습니다. [{0}]".format(e.__repr__()))
 
     def sort_entries(self):
+        """The function to sort "StudentCreditsList".
+
+        """
         pass
 
     def write_the_contents_to_the_same_file(self):
-        self._student_credits_list.save("./"+self.file_name)
-        print("{0} 에 저장되었습니다.".format(self.file_name))
+        """The function to save all student credits
+
+        """
+        self._student_credits_list.save("./"+self._filename)
+        print("{0} 에 저장되었습니다.".format(self._filename))
 
     def run(self):
+        """The function to run to start the program.
+
+        """
         while True:
             input_string = self.check_input()
             if input_string.upper() == 'A':
