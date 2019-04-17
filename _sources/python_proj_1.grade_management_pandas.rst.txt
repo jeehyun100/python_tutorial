@@ -1,0 +1,7 @@
+python\_proj\_1.grade\_management\_pandas module
+================================================
+
+.. automodule:: python_proj_1.grade_management_pandas
+    :members:
+    :undoc-members:
+    :show-inheritance:
