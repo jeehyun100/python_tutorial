@@ -1,12 +1,24 @@
 import datetime
 
+
 class Students:
-    """ 학생 클래스
-    학생에 관한 여러 프로퍼티 일련번호, 학생id, 이름, 생년월일, 중간고사, 기말고사, 평균, Grade를 가지고 있고,
-    각각의 Property의 입력값을 validation 해준다
+    """ Manage the student's credits
+
+    The "GradeManagement" class manage student's credits.
+    This class have functions add, delete, find, modify, print
+    , read, sort, quit, write files.
+
     """
 
     def __init__(self, *args):
+        """Creates a "Students"
+           Students class have properties which are index, id, name .. etc.
+           The average(mid, final term) and grade are automatically calculated.
+
+        Args:
+              *args: list, students information from datafile.
+
+        """
         if len(args) != 0:
             data = args[0]
             self._index = data[0]
@@ -16,11 +28,13 @@ class Students:
             self._midterm = int(data[4])
             self._finalterm = int(data[5])
             self._mean = (self._midterm + self._finalterm)/2
-            self._grade = 'S' if self._mean>=95 \
-                    else 'B' if (95 > self._mean and 90 <= self._mean) \
-                    else 'C' if (90 > self._mean and 80 <= self._mean) \
-                    else 'D' if (80 > self._mean and 70 <= self._mean)  \
-                    else 'F'
+            # Calculate grade automately
+            self._grade = 'F' if self._mean <= 60 \
+                else 'S' if (95 <= self._mean) \
+                else 'A' if (90 <= self._mean) \
+                else 'B' if (80 <= self._mean) \
+                else 'C' if (70 <= self._mean) \
+                else 'D'
         else:
             self._index = 0
             self._id = '0'
@@ -32,6 +46,12 @@ class Students:
             self._grade = 'F'
 
     def __str__(self):
+        """String representation of an students class
+
+        return:
+              String, split char '\t'
+
+        """
         return "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}".format(
             str(self._index).ljust(8, " "), str(self._id).ljust(8, " "),
             str(self._name).ljust(8, " "), str(self._birthday).ljust(8, " "),
@@ -41,12 +61,16 @@ class Students:
     __repr__ = __str__
 
     def cal_mean_grade(self):
+        """Calculate grade
+
+        """
         self._mean = (self._midterm + self._finalterm) / 2
-        self._grade = 'S' if self._mean >= 95 \
-            else 'B' if (95 > self._mean and 90 <= self._mean) \
-            else 'C' if (90 > self._mean and 80 <= self._mean) \
-            else 'D' if (80 > self._mean and 70 <= self._mean) \
-            else 'F'
+        self._grade = 'F' if self._mean <= 60 \
+            else 'S' if (95 <= self._mean) \
+            else 'A' if (90 <= self._mean) \
+            else 'B' if (80 <= self._mean) \
+            else 'C' if (70 <= self._mean) \
+            else 'D'
 
 
     @property
@@ -56,6 +80,18 @@ class Students:
     @index.setter
     def index(self, value):
         self._index = value
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def birthday(self):
+        return self._birthday
 
     @property
     def midterm(self):
@@ -82,11 +118,25 @@ class Students:
             raise ValueError(str(e)+" for {0} column ".format('finalterm'))
 
     @property
+    def mean(self):
+        return self._mean
+
+    @property
+    def grade(self):
+        return self._grade
+
+    @property
     def valid_set(self):
         return self._id
 
     @valid_set.setter
     def set_validation(self, values):
+        """Validate when add new entries
+
+        Raises:
+            ValueError: If input value has the wrong type.
+
+        """
         try:
             for _i, _v in enumerate(values):
                 if _i == 0:  # ID validation
@@ -105,6 +155,12 @@ class Students:
 
     @classmethod
     def columns(cls):
+        """Show columns infomation
+
+        return:
+            Dictionary, {column name : display flag, ...}
+
+        """
         # 입력 받아야 할 컬럼과 보여주는 컬럼을 설정함
         return {"일련번호": False, "학생 id": True, "이름": True, "생년월일": True,
                 "중간고사": True, "기말고사": True, "평균": False, "Grade": False}

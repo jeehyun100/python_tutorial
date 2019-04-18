@@ -2,6 +2,7 @@ import os
 from student_credits_list import StudentCreditsList
 from students import Students
 
+
 class GradeManagement:
     """ Manage the student's credits
 
@@ -13,8 +14,6 @@ class GradeManagement:
     def __init__(self):
         """Creates a "GradeManagement"
            It creates "StudentCreditsList()" and filename variable for saving.
-
-        Args:
 
         """
         self._student_credits_list = StudentCreditsList()
@@ -65,8 +64,10 @@ class GradeManagement:
         Args:
             input_description: The description text for input value.
             prohibit_list: Ths list of prohibit charactors
+
         For example:
             check_input_ext('Please Input only Y, ['Y'])
+
         Raises:
             ValueError: If input value has the wrong.
 
@@ -97,9 +98,8 @@ class GradeManagement:
 
                 filenames = os.listdir(os.path.dirname(os.path.abspath(__file__)))
                 data_file_list = [file for file in filenames if file == input_string]
-                if len(data_file_list) ==1:
+                if len(data_file_list) == 1:
                     return data_file_list[0]
-                    break
                 else:
                     print("현재 디렉토리 파일이름 : {0}".format(str(filenames)))
                     raise FileNotFoundError("파일을 찾을수 없습니다.")
@@ -125,8 +125,8 @@ class GradeManagement:
         pass
 
     def modify_an_entry(self):
-        input_description_1="(수정모드) [ID] 또는 [이름]을 하시오 : "
-        input_description_2="(수정모드) [중간점수](1) 또는 [기말점수](2)를 선택하시오 : "
+        input_description_1 = "(수정모드) [ID] 또는 [이름]을 하시오 : "
+        input_description_2 = "(수정모드) [중간점수](1) 또는 [기말점수](2)를 선택하시오 : "
         while True:
             try:
                 input_string_1 = input(input_description_1)
@@ -138,12 +138,12 @@ class GradeManagement:
                         if (input_string_1 == student_list._id) or (input_string_1 == student_list._name) :
                             print("\n[학생 ID: {0}  이름: {1}  중간고사: {2} 기말고사: {3}]\n".format(student_list._id,student_list._name,student_list._midterm,student_list._finalterm))
                             input_string_2 = int(input(input_description_2))
-                            if(input_string_2 ==1):
+                            if(input_string_2 == 1):
                                 input_string_mid = input('\n(수정) 중간 점수를 입력하십시오 : ')
                                 f.seek(34) # ★ 현재 권길동 1명에 대해서만 수정 가능, 각 인원마다 offset 위치 어떻게 잡을지 고민중
                                 f.write(input_string_mid)
                                 break
-                            elif(input_string_2 ==2):
+                            elif(input_string_2 == 2):
                                 input_string_final = input('\n(기말) 중간 점수를 입력하십시오 : ')
                                 f.seek(38)
                                 f.write(input_string_final)
@@ -167,15 +167,14 @@ class GradeManagement:
             # how to save
             # _student_credits_list.save()
 
-
     def print_the_contents_of_all_entries(self):
         """The function to print all student credits
 
         """
-        with open("data.txt",encoding='UTF-8') as f:
+        with open("data.txt", encoding='UTF-8') as f:
             lines_all = f.readlines()
-        #Create Student class from file
-        print_s = [Students(line.replace('\n','').split('\t')) for line in lines_all]
+        # Create Student class from file
+        print_s = [Students(line.replace('\n', '').split('\t')) for line in lines_all]
         print_str_row = StudentCreditsList(print_s)
         print(print_str_row)
 
@@ -239,6 +238,7 @@ class GradeManagement:
                 self.write_the_contents_to_the_same_file()
             elif input_string.upper() == 'H':
                 self.show_help_message()
+
 
 if __name__ == '__main__':
     GradeManagement().run()
