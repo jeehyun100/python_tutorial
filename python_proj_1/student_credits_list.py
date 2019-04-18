@@ -1,5 +1,7 @@
 from students import Students
 from collections import MutableSequence
+import unicodedata
+#>>>
 
 
 class StudentCreditsList(MutableSequence):
@@ -66,7 +68,9 @@ class StudentCreditsList(MutableSequence):
               String,
 
         """
-        first_line_for_column = '\t'.join(str(_v).ljust(8, " ") for _v in self._list[0].columns()) + '\n'
+        _cols = [_v for _v in self._list[0].columns()]
+        first_line_for_column = "{:<4s} {:<6s} {:<9s} {:<6s} {:<4s} {:<4s} {:<6s} {:<6s}\n"\
+            .format(_cols[0], _cols[1], _cols[2], _cols[3], _cols[4], _cols[5], _cols[6], _cols[7])
         return first_line_for_column + '\n'.join(str(_item) for _item in self._list)
 
     def sort(self, key=None, reverse=False):

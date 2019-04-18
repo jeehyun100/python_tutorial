@@ -52,7 +52,7 @@ class Students:
               String, split char '\t'
 
         """
-        return "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}".format(
+        return u"{0} {1} {2} {3} {4} {5} {6} {7}".format(
             str(self._index).ljust(8, " "), str(self._id).ljust(8, " "),
             str(self._name).ljust(8, " "), str(self._birthday).ljust(8, " "),
             str(self._midterm).ljust(8, " "), str(self._finalterm).ljust(8, " "),

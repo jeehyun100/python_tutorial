@@ -192,7 +192,7 @@ class GradeManagement:
         with open(self._filename) as f:
             lines_all = f.readlines()
         try:
-            data = [Students(line.replace('\n', '').split('\t')) for line in lines_all]
+            data = [Students(line.replace('\n', '').split()) for line in lines_all]
             self._student_credits_list = StudentCreditsList(data)
             print(self._student_credits_list)
         except Exception as e:
