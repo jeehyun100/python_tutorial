@@ -6,7 +6,6 @@ Submodules
 
 .. toctree::
 
-   python_proj_1.dddd
    python_proj_1.grade_management
    python_proj_1.grade_management_pandas
    python_proj_1.student_credits_list
