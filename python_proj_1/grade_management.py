@@ -96,19 +96,22 @@ class GradeManagement:
                             input_string_2 = int(input(input_description_2))
                             if(input_string_2 ==1):
                                 input_string_mid = input('\n(수정) 중간 점수를 입력하십시오 : ')
-                                f.seek(34) # ★ 현재 권길동 1명에 대해서만 수정 가능, 각 인원마다 offset 위치 어떻게 잡을지 고민중
-                                f.write(input_string_mid)
+                                student_list._midterm = input_string_mid
+                                print(student_list)
                                 break
                             elif(input_string_2 ==2):
                                 input_string_final = input('\n(기말) 중간 점수를 입력하십시오 : ')
-                                f.seek(38)
-                                f.write(input_string_final)
+                                student_list._finalterm = input_string_final
+                                print(student_list)
                                 break
+
+                print(student_obj)
+                StudentCreditsList.save(student_obj,"./data.txt")
 
             except FileNotFoundError as e:
                 print(repr(e))
-            self.print_the_contents_of_all_entries();
-            
+            #self.print_the_contents_of_all_entries();
+
 
             # First Load datafile
             # r
@@ -143,7 +146,27 @@ class GradeManagement:
             print("Data file 을 읽다가 오류가 발생했습니다. [{0}]".format(e.__repr__()))
 
     def sort_entries(self):
-        pass
+        with open("data.txt",encoding='UTF-8') as f:
+            lines_all = f.readlines()
+        print_s = [ Students(line.replace('\n','').split('\t')) for line in lines_all] #studnet 객체 생성
+        print_str_row = StudentCreditsList(print_s)
+        list=[]
+        name_list=[]
+        name_sort=[]
+        for student_list in print_str_row:
+            list.append(student_list)
+        print(list[0]._name)
+        input_description_1="(정렬모드) 이름순?(n), 평균점수순?(a), grade순?(g) : "
+        for i in range(19):
+            name_list.append(list[i]._name)
+        sort=sorted(name_list)
+        for x in range(19):
+            for y in range(19):
+                if(str(sort[x])==list[y]._name):
+                    name_sort.append(list[y])
+        print(name_sort)
+
+
 
     def write_the_contents_to_the_same_file(self):
         self._student_credits_list.save("./"+self.file_name)
