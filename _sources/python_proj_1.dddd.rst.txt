@@ -1,0 +1,7 @@
+python\_proj\_1.dddd module
+===========================
+
+.. automodule:: python_proj_1.dddd
+    :members:
+    :undoc-members:
+    :show-inheritance:
