@@ -1,6 +1,7 @@
 import os
 from student_credits_list import StudentCreditsList
 from students import Students
+from students0 import Students0
 
 
 class GradeManagement:
@@ -132,7 +133,10 @@ class GradeManagement:
                 input_string_1 = input(input_description_1)
                 with open("data.txt",'r+',encoding='UTF-8') as f:
                     lines_all = f.readlines()
-                    student = [Students(line.replace('\n','').split('\t')) for line in lines_all]
+                    #student_ord = [line.replace('\n','').split('\t') for line in lines_all]
+                    #[print(student_ord[i])for i in range(len(student_ord))]
+                    student = [Students0(line.replace('\n','').split('\t')) for line in lines_all]
+                    print(student)
                     student_obj=StudentCreditsList(student)
                     for student_list in student_obj:
                         if (input_string_1 == student_list._id) or (input_string_1 == student_list._name) :
@@ -150,6 +154,7 @@ class GradeManagement:
                                 break
                 print(student_obj)
                 StudentCreditsList.save(student_obj,"./data.txt")
+
             except FileNotFoundError as e:
                 print(repr(e))
             self.print_the_contents_of_all_entries();
@@ -220,8 +225,7 @@ class GradeManagement:
                         temp=list[j+1]
                         list[j+1]=list[j]
                         list[j]=temp
-            for i in range(len(list)):
-                print(list[i])
+            [print(list[i],"") for i in range(len(list))]
         elif(input_string == 'n'):
             for i in range(len(list)):
                 name_list.append(list[i]._name)
@@ -238,8 +242,9 @@ class GradeManagement:
                         temp=list[j+1]
                         list[j+1]=list[j]
                         list[j]=temp
-            for i in range(len(list)):
-                print(list[i])
+            [print(list[i],"") for i in range(len(list))]
+
+                #print(list[i])
 
     def write_the_contents_to_the_same_file(self):
         """The function to save all student credits
