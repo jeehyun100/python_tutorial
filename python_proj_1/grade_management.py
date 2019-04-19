@@ -212,30 +212,33 @@ class GradeManagement:
         #print(list[0]._name)
         input_description_1="(정렬모드) 이름순?(n), 평균점수순?(a), grade순?(g) : "
         input_string = input(input_description_1)
+        print(len(list))
         if(input_string == 'a'):
-            for i in range(19):
-                for i in range(19-i):
-                    if list[i]._mean > list[i+1]._mean:
-                        temp=list[i]
-                        list[i]=list[i+1]
-                        list[i+1]=temp
+            for i in range(len(list)):
+                for j in range(len(list)-i-1):
+                    if (list[j]._mean) < (list[j+1]._mean) :
+                        temp=list[j+1]
+                        list[j+1]=list[j]
+                        list[j]=temp
+            for i in range(len(list)):
                 print(list[i])
         elif(input_string == 'n'):
-            for i in range(19):
+            for i in range(len(list)):
                 name_list.append(list[i]._name)
             sort=sorted(name_list)
-            for x in range(19):
-                for y in range(19):
+            for x in range(len(list)):
+                for y in range(len(list)):
                     if(str(sort[x])==list[y]._name):
-                        name_sort.append(list[y])
-            print(name_sort)
+                        print(list[y])
+            #print(name_sort)
         elif(input_string == 'g'):
-            for i in range(19):
-                for i in range(19-i):
-                    if ord(list[i]._grade) < ord(list[i+1]._grade):
-                        temp=list[i]
-                        list[i]=list[i+1]
-                        list[i+1]=temp
+            for i in range(len(list)):
+                for j in range(len(list)-i-1):
+                    if ord(list[j]._mean) < ord(list[j+1]._mean):
+                        temp=list[j+1]
+                        list[j+1]=list[j]
+                        list[j]=temp
+            for i in range(len(list)):
                 print(list[i])
 
     def write_the_contents_to_the_same_file(self):
