@@ -234,7 +234,7 @@ class GradeManagement:
         elif(input_string == 'g'):
             for i in range(len(list)):
                 for j in range(len(list)-i-1):
-                    if ord(list[j]._mean) < ord(list[j+1]._mean):
+                    if list[j]._mean < list[j+1]._mean:
                         temp=list[j+1]
                         list[j+1]=list[j]
                         list[j]=temp
