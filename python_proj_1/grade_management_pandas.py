@@ -55,8 +55,8 @@ class GradeManagementPandas(GradeManagement):
         id = self.input_id()
         name = self.input_name()
         birthday = self.input_birthday()
-        midterm = self.input_score('Input Midterm Score')
-        finalterm = self.input_score('Input Finalterm Score')
+        midterm = self.input_score(1, 'Input Midterm Score')
+        finalterm = self.input_score(1, 'Input Finalterm Score')
 
         new_list = pd.DataFrame(
             [[id, name, pd.Timestamp(birthday), midterm, finalterm, np.nan, np.nan]],
@@ -119,7 +119,7 @@ class GradeManagementPandas(GradeManagement):
             print('The file is empty.')
 
     def sort_entries(self):
-        if len(self.student_list):
+        if not len(self.student_list):
             print(self.student_list.sort_values(by=['name', 'average', 'grade']))
 
     def write_the_contents_to_the_same_file(self):
