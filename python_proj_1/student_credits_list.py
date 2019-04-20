@@ -1,7 +1,6 @@
 from students import Students
 from collections import MutableSequence
 import unicodedata
-#>>>
 
 
 class StudentCreditsList(MutableSequence):
@@ -16,7 +15,7 @@ class StudentCreditsList(MutableSequence):
            Make a list from datafile
 
         """
-        super(StudentCreditsList, self).__init__()
+        super().__init__()
         if data is not None:
             self._list = list(data)
         else:
@@ -83,19 +82,24 @@ class StudentCreditsList(MutableSequence):
         self._list.sort(key=key, reverse=reverse)
 
     def insert(self, ii, val):
-        """Insert a studentCreditsList class
+        """Do not use it
         """
         pass
 
     def remove(self, ii):
-        """Delete a studentCreditsList class
+        """Do not use it
         """
         pass
 
-    def append(self, val):
-        """Append a studentCreditsList class
+    def removeByIdx(self, ii):
+        """Delete the item by index in the list
         """
-        pass
+        del self._list[ii]
+
+    def append(self, val):
+        """Append item into list
+        """
+        self._list.append(val)
 
     def save(self, files):
         """ Save a studentCreditsList class
@@ -105,11 +109,13 @@ class StudentCreditsList(MutableSequence):
 
 
 if __name__ == '__main__':
-    with open("1.txt") as f:
+    with open("data.txt") as f:
         lines_all = f.readlines()
-    foo = [Students(line.replace('\n', '').split('\t')) for line in lines_all]
+    foo = [Students(line.split()) for line in lines_all]
     voo = StudentCreditsList(foo)
-    for list_val in voo:
-        list_val.mean = (list_val.midterm + list_val.finalterm)/2
     voo.sort(key=lambda x: (x.mean, x.name), reverse=True)
+    print(voo)
+    voo.append(Students(('16', '11111111', 'e', '2000-01-01', 30, 34)))
+    print(voo)
+    voo.removeByIdx(-1)
     print(voo)

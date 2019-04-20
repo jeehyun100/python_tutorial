@@ -215,9 +215,9 @@ class GradeManagement:
                 input_string_1 = input(input_description_1)
                 with open("data.txt",'r+',encoding='UTF-8') as f:
                     lines_all = f.readlines()
-                    #student_ord = [line.replace('\n','').split('\t') for line in lines_all]
+                    #student_ord = [line.split() for line in lines_all]
                     #[print(student_ord[i])for i in range(len(student_ord))]
-                    student = [Students0(line.replace('\n','').split('\t')) for line in lines_all]
+                    student = [Students0(line.split()) for line in lines_all]
                     print(student)
                     student_obj=StudentCreditsList(student)
                     for student_list in student_obj:
@@ -265,7 +265,7 @@ class GradeManagement:
         with open("data.txt", encoding='UTF-8') as f:
             lines_all = f.readlines()
         # Create Student class from file
-        print_s = [Students(line.replace('\n', '').split('\t')) for line in lines_all]
+        print_s = [Students(line.split()) for line in lines_all]
         print_str_row = StudentCreditsList(print_s)
         print(print_str_row)
 
@@ -283,7 +283,7 @@ class GradeManagement:
         with open(self._filename) as f:
             lines_all = f.readlines()
         try:
-            data = [Students(line.replace('\n', '').split()) for line in lines_all]
+            data = [Students(line.split()) for line in lines_all]
             self._student_credits_list = StudentCreditsList(data)
             print(self._student_credits_list)
         except Exception as e:
@@ -292,7 +292,7 @@ class GradeManagement:
     def sort_entries(self):
         with open("data.txt",encoding='UTF-8') as f:
             lines_all = f.readlines()
-        print_s = [ Students(line.replace('\n','').split('\t')) for line in lines_all] #studnet 객체 생성
+        print_s = [Students(line.split()) for line in lines_all] #studnet 객체 생성
         print_str_row = StudentCreditsList(print_s)
         list=[]
         name_list=[]
