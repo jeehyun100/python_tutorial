@@ -40,6 +40,67 @@ class GradeManagement:
         """
         print(help_message)
 
+    def input_(self, level=0, input_description=''):
+        tabs = self.tabs * level
+        return input(tabs + input_description)
+
+    def input_id(self, level=1, input_description='Input ID'):
+        while True:
+            id = self.input_(
+                level,
+                input_description + ' (format: XXXXXXXX): ')
+
+            if len(id) == 6:
+                print(self.tabs * (level+1), f'Your Input: {id!r}')
+                return id
+
+    def input_name(self, level=1, input_description='Input Name'):
+        name = self.input_(level, input_description + ' : ')
+        print(self.tabs * (level+1), f'Your Input: {name!r}')
+
+        return name
+
+    def input_birthday(self, level=1, input_description='Input Birthday'):
+        while True:
+            birthday = self.input_(
+                level,
+                input_description + ' (format: YYYY-MM-DD): ')
+            try:
+                datetime.datetime.strptime(birthday, '%Y-%m-%d')
+            except:
+                pass
+            else:
+                print(self.tabs * (level+1), f'Your Input: {birthday!r}')
+                return birthday
+
+    def input_score(self, level=1, input_description='Input Score'):
+        while True:
+            score = self.input_(
+                level,
+                input_description + ' (format: integer): ')
+            try:
+                score = int(score)
+                if 0 <= score <= 100:
+                    print(self.tabs * (level+1), f'Your Input: {score!r}')
+                    return score
+            except:
+                pass
+
+    def input_options(self, opts, level=1, input_description='Input'):
+        opts = list(map(lambda x: str(x), opts))
+        opts = list(map(lambda x: x.upper(), opts))
+        q_str = (
+            input_description +
+            ' (Choose among ' + '{!r}' + ', {!r}'*(len(opts) - 1) + '): '
+        )
+
+        while True:
+            opt = self.input_(level, q_str.format(*opts))
+
+            if opt.upper() in opts:
+                print(self.tabs * (level+1), f'Your Input: {opt.upper()!r}')
+                return opt
+
     def check_input(self):
         """Check input value
         Only can input A, D, F, M, P, R, S, Q, W
