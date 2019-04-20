@@ -1,7 +1,7 @@
 import datetime
 
 
-class Students:
+class Students0:
     """ Manage the student's credits
 
     The "GradeManagement" class manage student's credits.
@@ -27,14 +27,15 @@ class Students:
             self._birthday = data[3]
             self._midterm = int(data[4])
             self._finalterm = int(data[5])
-            self._mean = (self._midterm + self._finalterm)/2
+            #self._mean = (self._midterm + self._finalterm)/2
             # Calculate grade automately
-            self._grade = 'F' if self._mean <= 60 \
+            '''self._grade = 'F' if self._mean <= 60 \
                 else 'S' if (95 <= self._mean) \
                 else 'A' if (90 <= self._mean) \
                 else 'B' if (80 <= self._mean) \
                 else 'C' if (70 <= self._mean) \
                 else 'D'
+            '''
         else:
             self._index = 0
             self._id = '0'
@@ -42,8 +43,8 @@ class Students:
             self._birthday = ''
             self._midterm = 0
             self._finalterm = 0
-            self._mean = 0
-            self._grade = 'F'
+            #self._mean = 0
+            #self._grade = 'F'
 
     def __str__(self):
         """String representation of an students class
@@ -52,11 +53,10 @@ class Students:
               String, split char '\t'
 
         """
-        return u"{0} {1} {2} {3} {4} {5} {6} {7}".format(
+        return u"{0} {1} {2} {3} {4} {5} ".format(
             str(self._index).ljust(8, " "), str(self._id).ljust(8, " "),
             str(self._name).ljust(8, " "), str(self._birthday).ljust(8, " "),
-            str(self._midterm).ljust(8, " "), str(self._finalterm).ljust(8, " "),
-            str(self._mean).ljust(8, " "), str(self._grade).ljust(8, " "))
+            str(self._midterm).ljust(8, " "), str(self._finalterm).ljust(8, " "))
 
     __repr__ = __str__
 
