@@ -19,7 +19,7 @@ class GradeManagement:
 
         """
         self._student_credits_list = StudentCreditsList()
-        self._filename = ''
+        self._filename = None
         self.tabs = '  '
 
     def show_help_message(self):
@@ -349,8 +349,15 @@ class GradeManagement:
         """The function to save all student credits
 
         """
-        self._student_credits_list.save("./"+self._filename)
-        print("{0} 에 저장되었습니다.".format(self._filename))
+        if not len(self._student_credits_list):
+            print('There is no contents to write')
+            return
+
+        if self._filename is None:
+            self._filename = self.input_filename()
+
+        self._student_credits_list.save(self._filename)
+        print(f'Data are saved into {self._filename!r}')
 
     def run(self):
         """The function to run to start the program.

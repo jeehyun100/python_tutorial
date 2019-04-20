@@ -108,6 +108,7 @@ if __name__ == '__main__':
         lines_all = f.readlines()
     foo = [Students(line.split()) for line in lines_all]
     voo = StudentCreditsList(foo)
+    print(voo)
     voo.sort(key=lambda x: (x.mean, x.name), reverse=True)
     print(voo)
     voo.append(Students((16, '11111111', 'e', '2000-01-01', 30, 34)))

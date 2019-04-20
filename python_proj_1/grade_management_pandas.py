@@ -122,10 +122,22 @@ class GradeManagementPandas(GradeManagement):
 
     def sort_entries(self):
         if not len(self.student_list):
-            print(self.student_list.sort_values(by=['name', 'average', 'grade']))
+            print('There is no contents to sort')
+            return
+
+        opt = self.input_options(['n', 'a', 'g'], 1, 'Sort by name(n) or average(a) or grade(g)')
+        if opt.upper() == 'N':
+            print(self.student_list.sort_values(by=['name', 'average'], ascending=[True,False]))
+        elif opt.upper() == 'A':
+            print(self.student_list.sort_values(by=['average', 'name'], ascending=[False,True]))
+        elif opt.upper() == 'G':
+            print(self.student_list.sort_values(by=['average', 'name'], ascending=[False,True]))
 
     def write_the_contents_to_the_same_file(self):
-        if len(self.student_list):
+        """The function to save all student credits
+
+        """
+        if not len(self.student_list):
             print('There is no contents to write')
             return
 
@@ -134,6 +146,7 @@ class GradeManagementPandas(GradeManagement):
 
         with open(self._filename, 'w') as OUT:
             OUT.write(self.student_list.to_string(header=False, index_names=False))
+        print(f'Data are saved into {self._filename!r}')
 
 if __name__ == '__main__':
 
