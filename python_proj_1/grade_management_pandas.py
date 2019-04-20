@@ -1,6 +1,5 @@
 import os
 import sys
-import datetime
 import numpy as np
 import pandas as pd
 from grade_management import GradeManagement
@@ -23,6 +22,7 @@ class GradeManagementPandas(GradeManagement):
         self.student_list = pd.DataFrame(columns=self.columns)
         self.student_list = self.student_list.astype(self.dtype)
         self.tabs = '  '
+        self._filename = None
 
     def merge_list(self, new_list):
         self.student_list = self.student_list.append(new_list, sort=False, ignore_index=True)
@@ -103,10 +103,10 @@ class GradeManagementPandas(GradeManagement):
             print('There is no contents to show')
 
     def read_personal_data(self):
-        filename = input('Input Filename: ')
+        self._filename = self.input_filename()
         try:
             new_list = pd.read_csv(
-                filename,
+                self._filename,
                 sep="\s+",
                 names=['index'] + self.columns,
                 index_col=['index'],
@@ -116,18 +116,21 @@ class GradeManagementPandas(GradeManagement):
 
             self.merge_list(new_list)
         except pd.errors.EmptyDataError:
-            print('The file is empty.', file=sys.stderr)
-        except FileNotFoundError:
-            print('The file doesn\'t exist.', file=sys.stderr)
+            print('The file is empty.')
 
     def sort_entries(self):
         if len(self.student_list):
             print(self.student_list.sort_values(by=['name', 'average', 'grade']))
 
     def write_the_contents_to_the_same_file(self):
-        filename = input('Input Filename: ')
+        if len(self.student_list):
+            print('There is no contents to write')
+            return
 
-        with open(filename, 'w') as OUT:
+        if self._filename is None:
+            self._filename = self.input_filename()
+
+        with open(self._filename, 'w') as OUT:
             OUT.write(self.student_list.to_string(header=False, index_names=False))
 
 if __name__ == '__main__':

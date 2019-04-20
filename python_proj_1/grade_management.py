@@ -1,4 +1,5 @@
 import os
+import datetime
 from student_credits_list import StudentCreditsList
 from students import Students
 from students0 import Students0
@@ -19,6 +20,7 @@ class GradeManagement:
         """
         self._student_credits_list = StudentCreditsList()
         self._filename = ''
+        self.tabs = '  '
 
     def show_help_message(self):
         """Show help message
@@ -27,15 +29,15 @@ class GradeManagement:
 
         help_message = """
 ######################################################
-(a) (‘A’ 또는 ‘a’) add a new entry
-(d) (‘D’ 또는 ‘d’) delete an entry
-(f) (‘F’ 또는 ‘f’) find some item from entry
-(m) (‘M’ 또는 ‘m’) modify an entry
-(p) (‘P’ 또는 ‘p’) print the contents of all entries
-(r) (‘R’ 또는 ‘r’) read personal data from a file
-(s) (‘S’ 또는 ‘s’) sort entries
-(q) (‘Q’ 또는 ‘q’) quit
-(w) (‘W’ 또는 ‘w’) write the contents to the same file
+(a) (‘A’ or ‘a’) add a new entry
+(d) (‘D’ or ‘d’) delete an entry
+(f) (‘F’ or ‘f’) find some item from entry
+(m) (‘M’ or ‘m’) modify an entry
+(p) (‘P’ or ‘p’) print the contents of all entries
+(r) (‘R’ or ‘r’) read personal data from a file
+(s) (‘S’ or ‘s’) sort entries
+(q) (‘Q’ or ‘q’) quit
+(w) (‘W’ or ‘w’) write the contents to the same file
 ######################################################
         """
         print(help_message)
@@ -53,6 +55,8 @@ class GradeManagement:
             if len(id) == 6:
                 print(self.tabs * (level+1), f'Your Input: {id!r}')
                 return id
+            else:
+                print(self.tabs * (level+1), "Wrong format.")
 
     def input_name(self, level=1, input_description='Input Name'):
         name = self.input_(level, input_description + ' : ')
@@ -68,7 +72,7 @@ class GradeManagement:
             try:
                 datetime.datetime.strptime(birthday, '%Y-%m-%d')
             except:
-                pass
+                print(self.tabs * (level+1), "Wrong format.")
             else:
                 print(self.tabs * (level+1), f'Your Input: {birthday!r}')
                 return birthday
@@ -84,7 +88,7 @@ class GradeManagement:
                     print(self.tabs * (level+1), f'Your Input: {score!r}')
                     return score
             except:
-                pass
+                print(self.tabs * (level+1), "Wrong format.")
 
     def input_options(self, opts, level=1, input_description='Input'):
         opts = list(map(lambda x: str(x), opts))
@@ -100,22 +104,43 @@ class GradeManagement:
             if opt.upper() in opts:
                 print(self.tabs * (level+1), f'Your Input: {opt.upper()!r}')
                 return opt
+            else:
+                print(self.tabs * (level+1), "Wrong format.")
+
+    def input_filename(self, level=1, input_description='Input Filename'):
+        """The function to check if the file exists
+
+        Return:
+             A type `string` Name if first match file
+        Raises:
+            FileNotFoundError: If the file is not existing in the directory.
+        """
+        while True:
+            filename = self.input_(
+                level,
+                input_description + ' : ')
+
+            if os.path.isfile(filename):
+                print(self.tabs * (level+1), f'Your Input: {filename!r}')
+                return filename
+            else:
+                print(self.tabs * (level+1), "The file doesn't exist.")
 
     def check_input(self):
         """Check input value
-        Only can input A, D, F, M, P, R, S, Q, W
+        You can only input A, D, F, M, P, R, S, Q, W.
 
         Raises:
-            ValueError: If input value has the wrong.
+            ValueError: If input value is other than indicated above.
 
         """
-        input_description = "Choose one of the options below(Help : h) :     "
+        input_description = "Choose one of the options below (Help : h) : "
 
         while True:
             try:
                 input_string = input(input_description).upper()
                 assert input_string in ['A', 'D', 'F', 'M', 'P', 'R', 'S', 'Q', 'W', 'H'], \
-                    "You can only A, D, F, M, P, R, S, Q, W"
+                    "You can only input A, D, F, M, P, R, S, Q, W, H"
                 return input_string
             except AssertionError as e:
                 print(repr(e))
@@ -142,30 +167,6 @@ class GradeManagement:
                     "You can only {0}".format(str(prohibit_list))
                 return input_string
             except AssertionError as e:
-                print(repr(e))
-
-    def check_input_filename(self):
-        """The function to check if a file is in the directory
-
-        Return:
-             A type `string` Name if first match file
-        Raises:
-            FileNotFoundError: If file is not existing in the directory.
-
-        """
-        input_description = "현재 디렉토리에 있는 Data 파일을 입력하십시요. :    "
-        while True:
-            try:
-                input_string = input(input_description)
-
-                filenames = os.listdir(os.path.dirname(os.path.abspath(__file__)))
-                data_file_list = [file for file in filenames if file == input_string]
-                if len(data_file_list) == 1:
-                    return data_file_list[0]
-                else:
-                    print("현재 디렉토리 파일이름 : {0}".format(str(filenames)))
-                    raise FileNotFoundError("파일을 찾을수 없습니다.")
-            except FileNotFoundError as e:
                 print(repr(e))
 
     def add_a_new_entry(self):
@@ -258,7 +259,7 @@ class GradeManagement:
 
         """
 
-        self._filename = self.check_input_filename()
+        self._filename = self.input_filename()
         with open(self._filename) as f:
             lines_all = f.readlines()
         try:
