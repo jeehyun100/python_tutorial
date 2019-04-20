@@ -1,7 +1,6 @@
 import os
 import sys
 import datetime
-import argparse
 import numpy as np
 import pandas as pd
 from grade_management import GradeManagement
@@ -174,17 +173,6 @@ class GradeManagementPandas(GradeManagement):
         with open(filename, 'w') as OUT:
             OUT.write(self.student_list.to_string(header=False, index_names=False))
 
-def main(args):
-    if args.pandas:
-        GradeManagementPandas().run()
-    else:
-        GradeManagement().run()
-
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--pandas", action="store_true",
-            help="output label images")
-    args = parser.parse_args()
-
-    main(args)
+    GradeManagementPandas().run()
