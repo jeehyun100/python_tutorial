@@ -52,11 +52,11 @@ class GradeManagement:
                 level,
                 input_description + ' (format: XXXXXXXX): ')
 
-            if len(id) == 6:
+            if len(id) == 8:
                 print(self.tabs * (level+1), f'Your Input: {id!r}')
                 return id
             else:
-                print(self.tabs * (level+1), "Wrong format.")
+                print(self.tabs * (level+1), "Wrong input.")
 
     def input_name(self, level=1, input_description='Input Name'):
         name = self.input_(level, input_description + ' : ')
@@ -72,7 +72,7 @@ class GradeManagement:
             try:
                 datetime.datetime.strptime(birthday, '%Y-%m-%d')
             except:
-                print(self.tabs * (level+1), "Wrong format.")
+                print(self.tabs * (level+1), "Wrong input.")
             else:
                 print(self.tabs * (level+1), f'Your Input: {birthday!r}')
                 return birthday
@@ -88,7 +88,7 @@ class GradeManagement:
                     print(self.tabs * (level+1), f'Your Input: {score!r}')
                     return score
             except:
-                print(self.tabs * (level+1), "Wrong format.")
+                print(self.tabs * (level+1), "Wrong input.")
 
     def input_options(self, opts, level=1, input_description='Input'):
         opts = list(map(lambda x: str(x), opts))
@@ -105,7 +105,7 @@ class GradeManagement:
                 print(self.tabs * (level+1), f'Your Input: {opt.upper()!r}')
                 return opt
             else:
-                print(self.tabs * (level+1), "Wrong format.")
+                print(self.tabs * (level+1), "Wrong input.")
 
     def input_filename(self, level=1, input_description='Input Filename'):
         """The function to check if the file exists
@@ -179,13 +179,33 @@ class GradeManagement:
 
         """
         pass
+        id = self.input_id()
+        name = self.input_name()
+        birthday = self.input_birthday()
+        midterm = self.input_score(1, 'Input Midterm Score')
+        finalterm = self.input_score(1, 'Input Finalterm Score')
+
+        Students('100', id, name, birthday, midterm, finalterm)
 
     def delete_an_entry(self):
         pass
 
     def find_some_item_from_entry(self):
-        #  F : ID와 이름으로 학생 찾기
         pass
+        student = None
+        opt = self.input_options(['id', 'name'], 1, 'How do you want to find the student?')
+        if opt.upper() == 'ID':
+            id = self.input_id(1, "Input ID of Student You're Looking for")
+            student =  (
+                list(filter(lambda item: (item[1]._id == id),enumerate(self._student_credits_list)))
+            )
+        else:
+            name = self.input_name(1, "Input Name of Student You're Looking for")
+            student = (
+                list(filter(lambda item: (item[1]._name == name),enumerate(self._student_credits_list)))
+            )
+
+        print(student)
 
     def modify_an_entry(self):
         input_description_1 = "(수정모드) [ID] 또는 [이름]을 하시오 : "

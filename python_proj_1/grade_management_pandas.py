@@ -31,13 +31,15 @@ class GradeManagementPandas(GradeManagement):
         self.student_list.grade = self.student_list.average.apply(self.calc_grade)
 
     def calc_grade(self, average):
-        if 90 < average:
+        if 95 <= average:
+            return 'S'
+        elif 90 <= average:
             return 'A'
-        elif 80 < average <= 90:
+        elif 80 <= average:
             return 'B'
-        elif 70 < average <= 80:
+        elif 70 <= average:
             return 'C'
-        elif 60 < average <= 70:
+        elif 60 <= average:
             return 'D'
         else:
             return 'F'
