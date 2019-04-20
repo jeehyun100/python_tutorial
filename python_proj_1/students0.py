@@ -53,7 +53,7 @@ class Students0:
               String, split char '\t'
 
         """
-        return u"{0} {1} {2} {3} {4} {5} ".format(
+        return u"{0} {1} {2} {3} {4} {5}                    ".format(
             str(self._index).ljust(8, " "), str(self._id).ljust(8, " "),
             str(self._name).ljust(8, " "), str(self._birthday).ljust(8, " "),
             str(self._midterm).ljust(8, " "), str(self._finalterm).ljust(8, " "))
