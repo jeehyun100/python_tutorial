@@ -169,6 +169,11 @@ class GradeManagement:
             except AssertionError as e:
                 print(repr(e))
 
+    def attech_index(self):
+
+        for i, student in enumerate(self._student_credits_list, start=1):
+            student.index = i
+
     def add_a_new_entry(self):
         """The function to check if a file is in the directory
 
@@ -178,34 +183,44 @@ class GradeManagement:
             FileNotFoundError: If file is not existing in the directory.
 
         """
-        pass
         id = self.input_id()
         name = self.input_name()
         birthday = self.input_birthday()
         midterm = self.input_score(1, 'Input Midterm Score')
         finalterm = self.input_score(1, 'Input Finalterm Score')
 
-        Students('100', id, name, birthday, midterm, finalterm)
+        self._student_credits_list.append(
+            Students((0, id, name, birthday, midterm, finalterm)))
 
-    def delete_an_entry(self):
-        pass
+        self.attech_index()
 
-    def find_some_item_from_entry(self):
-        pass
-        student = None
+    def find_student(self):
+
         opt = self.input_options(['id', 'name'], 1, 'How do you want to find the student?')
         if opt.upper() == 'ID':
             id = self.input_id(1, "Input ID of Student You're Looking for")
-            student =  (
-                list(filter(lambda item: (item[1]._id == id),enumerate(self._student_credits_list)))
+            return (
+                filter(lambda item: item._id == id, self._student_credits_list)
             )
         else:
             name = self.input_name(1, "Input Name of Student You're Looking for")
-            student = (
-                list(filter(lambda item: (item[1]._name == name),enumerate(self._student_credits_list)))
+            return (
+                filter(lambda item: item._name == name, self._student_credits_list)
             )
 
-        print(student)
+    def delete_an_entry(self):
+
+        for student in self.find_student():
+            self._student_credits_list.remove(student)
+
+    def find_some_item_from_entry(self):
+
+        student_list = StudentCreditsList()
+
+        for student in self.find_student():
+            student_list.append(student)
+
+        print(student_list)
 
     def modify_an_entry(self):
         input_description_1 = "(수정모드) [ID] 또는 [이름]을 하시오 : "
@@ -242,7 +257,7 @@ class GradeManagement:
 
             except FileNotFoundError as e:
                 print(repr(e))
-            self.print_the_contents_of_all_entries();
+            self.print_the_contents_of_all_entries()
 
 
             # First Load datafile
@@ -259,15 +274,13 @@ class GradeManagement:
             # _student_credits_list.save()
 
     def print_the_contents_of_all_entries(self):
-        """The function to print all student credits
+        """The function to print all student credits in the memory
 
         """
-        with open("data.txt", encoding='UTF-8') as f:
-            lines_all = f.readlines()
-        # Create Student class from file
-        print_s = [Students(line.split()) for line in lines_all]
-        print_str_row = StudentCreditsList(print_s)
-        print(print_str_row)
+        if len(self._student_credits_list):
+            print(self._student_credits_list)
+        else:
+            print('There is no contents to show')
 
     def read_personal_data(self):
         """The function to read data file which is student credit data.
@@ -283,11 +296,13 @@ class GradeManagement:
         with open(self._filename) as f:
             lines_all = f.readlines()
         try:
-            data = [Students(line.split()) for line in lines_all]
-            self._student_credits_list = StudentCreditsList(data)
-            print(self._student_credits_list)
+            for line in lines_all:
+                self._student_credits_list.append(Students(line.split()))
         except Exception as e:
             print("Data file 을 읽다가 오류가 발생했습니다. [{0}]".format(e.__repr__()))
+
+        self.attech_index()
+        self.print_the_contents_of_all_entries()
 
     def sort_entries(self):
         with open("data.txt",encoding='UTF-8') as f:

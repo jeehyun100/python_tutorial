@@ -21,7 +21,7 @@ class Students:
         """
         if len(args) != 0:
             data = args[0]
-            self._index = data[0]
+            self._index = int(data[0])
             self._id = data[1]
             self._name = data[2]
             self._birthday = data[3]

@@ -87,17 +87,12 @@ class StudentCreditsList(MutableSequence):
         pass
 
     def remove(self, ii):
-        """Do not use it
+        """remove item in the list
         """
-        pass
-
-    def removeByIdx(self, ii):
-        """Delete the item by index in the list
-        """
-        del self._list[ii]
+        self._list.remove(ii)
 
     def append(self, val):
-        """Append item into list
+        """Append item into the list
         """
         self._list.append(val)
 
@@ -115,7 +110,11 @@ if __name__ == '__main__':
     voo = StudentCreditsList(foo)
     voo.sort(key=lambda x: (x.mean, x.name), reverse=True)
     print(voo)
-    voo.append(Students(('16', '11111111', 'e', '2000-01-01', 30, 34)))
+    voo.append(Students((16, '11111111', 'e', '2000-01-01', 30, 34)))
     print(voo)
-    voo.removeByIdx(-1)
+    students =  (
+        filter(lambda item: item._id == '11111111', voo)
+    )
+    for student in students:
+        voo.remove(student)
     print(voo)
