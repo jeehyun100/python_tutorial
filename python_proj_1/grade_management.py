@@ -226,6 +226,7 @@ class GradeManagement:
             Students((0, id, name, birthday, midterm, finalterm)))
 
         self.attach_index()
+        print(" Add function finished ")
 
     def find_student(self):
         """
@@ -266,7 +267,7 @@ class GradeManagement:
                     self._student_credits_list.remove(student)
                     count=count+1
                 self.attach_index()
-                print(" ",count, " rows deleted")
+                print(" ",count, "rows deleted")
             else:
                 print("Delete canceled.")
 
@@ -300,10 +301,11 @@ class GradeManagement:
             else:
                 for student in students:
                     student.finalterm = score
+            print(" Modify function finished")
         else:
             print("No Data")
 
-        print("rows modified")
+
 
     def print_the_contents_of_all_entries(self):
         """The function to print all student credits in the memory
