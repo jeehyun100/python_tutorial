@@ -261,7 +261,7 @@ class GradeManagement:
         """
 
         self._filename = self.input_filename()
-        with open(self._filename) as f:
+        with open(self._filename, encoding='utf-8') as f:
             lines_all = f.readlines()
         try:
             for line in lines_all:

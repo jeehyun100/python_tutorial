@@ -99,12 +99,12 @@ class StudentCreditsList(MutableSequence):
     def save(self, files):
         """ Save a studentCreditsList class
         """
-        with open("./"+files, 'w') as datafile:
+        with open("./"+files, 'w', encoding='utf-8') as datafile:
             datafile.write(self.__repr__())
 
 
 if __name__ == '__main__':
-    with open("data.txt") as f:
+    with open("data.txt", encoding='utf-8') as f:
         lines_all = f.readlines()
     foo = [Students(line.split()) for line in lines_all]
     voo = StudentCreditsList(foo)
