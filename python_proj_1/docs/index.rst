@@ -20,6 +20,7 @@
         python run.py -p
 
 작업내용 ::
+
     설계
         Standard version : 백지현
         Pandas version : 지동근
