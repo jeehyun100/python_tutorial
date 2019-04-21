@@ -4,6 +4,9 @@
 ## prerequisite
 * pandas >=  0.24.2
 
+## Documentation
+https://jeehyun100.github.io/python_tutorial/
+
 ## 제작자
 백지현, 지동근, 김후빈
 
@@ -20,8 +23,6 @@
 
 문서화 : 백지현, 지동근, 김후빈
 
-## Documentation
-[https://jeehyun100.github.io/python_tutorial/]
 
 ## Class
 * students : 학생 정보
