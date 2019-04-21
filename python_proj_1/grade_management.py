@@ -395,8 +395,8 @@ class GradeManagement:
             elif input_string.upper() == 'S':
                 self.sort_entries()
             elif input_string.upper() == 'Q':
-                input_string=input(' (Y,N) before you quit, Do you want to save? : ')
-                if(input_string == 'Y'):
+                opt = self.input_options(['y', 'n'], 1, 'before you quit, Do you want to save?')
+                if(opt.upper() == 'Y'):
                     self.write_the_contents_to_the_same_file()
                     break
                 else :
