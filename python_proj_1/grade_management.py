@@ -227,40 +227,19 @@ class GradeManagement:
             1) to modify data, input student ID or name data
             2) choice a midterm or finalterm for the student
             3) Enter the student's score
-
-        Raises:
-            FileNotFoundError: If file is not existing in the directory.
-
         """
-        input_description_1 = "(수정모드) [ID] 또는 [이름]을 하시오 : "
-        input_description_2 = "(수정모드) [중간점수](1) 또는 [기말점수](2)를 선택하시오 : "
-        while True:
-            try:
-                input_string_1 = input(input_description_1)
-                with open("data.txt",'r+',encoding='UTF-8') as f:
-                    lines_all = f.readlines()
-                    student = [Students0(line.split()) for line in lines_all]
-                    print(student)
-                    student_obj=StudentCreditsList(student)
-                    for student_list in student_obj:
-                        if (input_string_1 == student_list._id) or (input_string_1 == student_list._name) :
-                            print("\n[학생 ID: {0}  이름: {1}  중간고사: {2} 기말고사: {3}]\n".format(student_list._id,student_list._name,student_list._midterm,student_list._finalterm))
-                            input_string_2 = int(input(input_description_2))
-                            if(input_string_2 ==1):
-                                input_string_mid = input('\n(수정) 중간 점수를 입력하십시오 : ')
-                                student_list._midterm = input_string_mid
-                                print(student_list)
-                                break
-                            elif(input_string_2 ==2):
-                                input_string_final = input('\n(기말) 중간 점수를 입력하십시오 : ')
-                                student_list._finalterm = input_string_final
-                                print(student_list)
-                                break
-                print(student_obj)
-                StudentCreditsList.save(student_obj,"./data.txt")
-            except FileNotFoundError as e:
-                print(repr(e))
 
+        students = self.find_student()
+
+        opt = self.input_options(['midterm', 'finalterm'], 1, 'Which test do you want to modify?')
+        score = self.input_score()
+
+        if opt.upper() == 'MIDTERM':
+            for student in students:
+                student.midterm = score
+        else:
+            for student in students:
+                student.finalterm = score
 
     def print_the_contents_of_all_entries(self):
         """The function to print all student credits in the memory
@@ -298,43 +277,24 @@ class GradeManagement:
         the sorting method is name, mean, grade.(
 
         """
-        with open("data.txt",encoding='UTF-8') as f:
-            lines_all = f.readlines()
-        print_s = [Students(line.split()) for line in lines_all] #studnet 객체 생성
-        print_str_row = StudentCreditsList(print_s)
-        list=[]
-        name_list=[]
-        name_sort=[]
-        for student_list in print_str_row:
-            list.append(student_list)
-        input_description_1="(정렬모드) 이름순?(n), 평균점수순?(a), grade순?(g) : "
-        input_string = input(input_description_1)
-        print(len(list))
-        if(input_string == 'a'):
-            for i in range(len(list)):
-                for j in range(len(list)-i-1):
-                    if (list[j]._mean) < (list[j+1]._mean) :
-                        temp=list[j+1]
-                        list[j+1]=list[j]
-                        list[j]=temp
-            [print(list[i],"") for i in range(len(list))]
-        elif(input_string == 'n'):
-            for i in range(len(list)):
-                name_list.append(list[i]._name)
-            sort=sorted(name_list)
-            for x in range(len(list)):
-                for y in range(len(list)):
-                    if(str(sort[x])==list[y]._name):
-                        print(list[y])
-        elif(input_string == 'g'):
-            for i in range(len(list)):
-                for j in range(len(list)-i-1):
-                    if list[j]._mean < list[j+1]._mean:
-                        temp=list[j+1]
-                        list[j+1]=list[j]
-                        list[j]=temp
-            [print(list[i],"") for i in range(len(list))]
+        if not len(self._student_credits_list):
+            print('There is no contents to sort')
+            return
 
+        # Do not change the order of list in place
+        student_list_for_print = StudentCreditsList()
+        for student in self._student_credits_list:
+            student_list_for_print.append(student)
+
+        opt = self.input_options(['n', 'a', 'g'], 1, 'Sort by name(n) or average(a) or grade(g)')
+        if opt.upper() == 'N':
+            student_list_for_print.sort(key=lambda x: x.mean, reverse=True)
+            student_list_for_print.sort(key=lambda x: x.name)
+        elif opt.upper() == 'A' or opt.upper() == 'G':
+            student_list_for_print.sort(key=lambda x: x.name)
+            student_list_for_print.sort(key=lambda x: x.mean, reverse=True)
+
+        print(student_list_for_print)
 
     def write_the_contents_to_the_same_file(self):
         """The function to save all student credits

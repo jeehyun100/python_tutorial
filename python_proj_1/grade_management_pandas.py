@@ -146,9 +146,7 @@ class GradeManagementPandas(GradeManagement):
         opt = self.input_options(['n', 'a', 'g'], 1, 'Sort by name(n) or average(a) or grade(g)')
         if opt.upper() == 'N':
             self.print_dataframe(self.student_list.sort_values(by=['name', 'average'], ascending=[True,False]))
-        elif opt.upper() == 'A':
-            self.print_dataframe(self.student_list.sort_values(by=['average', 'name'], ascending=[False,True]))
-        elif opt.upper() == 'G':
+        elif opt.upper() == 'A' or opt.upper() == 'G':
             self.print_dataframe(self.student_list.sort_values(by=['average', 'name'], ascending=[False,True]))
 
     def write_the_contents_to_the_same_file(self):
