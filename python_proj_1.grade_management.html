@@ -172,22 +172,21 @@ This class have functions add, delete, find, modify, print
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.add_a_new_entry">
 <code class="descname">add_a_new_entry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.add_a_new_entry" title="Permalink to this definition">¶</a></dt>
-<dd><p>The function to check if a file is in the directory</p>
-<dl class="simple">
-<dt>Return:</dt><dd><p>A type <cite>string</cite> Name if first match file</p>
-</dd>
-<dt>Raises:</dt><dd><p>FileNotFoundError: If file is not existing in the directory.</p>
-</dd>
-</dl>
+<dd><p>Add student info into the student list.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="python_proj_1.grade_management.GradeManagement.attach_index">
+<code class="descname">attach_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.attach_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.check_input">
 <code class="descname">check_input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.check_input" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check input value
-Only can input A, D, F, M, P, R, S, Q, W</p>
+You can only input A, D, F, M, P, R, S, Q, W.</p>
 <dl class="simple">
-<dt>Raises:</dt><dd><p>ValueError: If input value has the wrong.</p>
+<dt>Raises:</dt><dd><p>ValueError: If input value is other than indicated above.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -208,21 +207,10 @@ prohibit_list: Ths list of prohibit charactors</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="python_proj_1.grade_management.GradeManagement.check_input_filename">
-<code class="descname">check_input_filename</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.check_input_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>The function to check if a file is in the directory</p>
-<dl class="simple">
-<dt>Return:</dt><dd><p>A type <cite>string</cite> Name if first match file</p>
-</dd>
-<dt>Raises:</dt><dd><p>FileNotFoundError: If file is not existing in the directory.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.delete_an_entry">
 <code class="descname">delete_an_entry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.delete_an_entry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Delete student info from the student list.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.find_some_item_from_entry">
@@ -230,14 +218,99 @@ prohibit_list: Ths list of prohibit charactors</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="python_proj_1.grade_management.GradeManagement.find_student">
+<code class="descname">find_student</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.find_student" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add student info into the student list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="python_proj_1.grade_management.GradeManagement.input_">
+<code class="descname">input_</code><span class="sig-paren">(</span><em>level=0</em>, <em>input_description=''</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.input_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base input function</p>
+<dl class="simple">
+<dt>Return:</dt><dd><p>A type input function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="python_proj_1.grade_management.GradeManagement.input_birthday">
+<code class="descname">input_birthday</code><span class="sig-paren">(</span><em>level=1</em>, <em>input_description='Input Birthday'</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.input_birthday" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to check birthdate</p>
+<dl class="simple">
+<dt>Return:</dt><dd><p>A type <cite>datetime.str</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="python_proj_1.grade_management.GradeManagement.input_filename">
+<code class="descname">input_filename</code><span class="sig-paren">(</span><em>level=1</em>, <em>input_description='Input Filename'</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.input_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to check if the file exists</p>
+<dl class="simple">
+<dt>Return:</dt><dd><p>A type <cite>string</cite> Name if first match file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="python_proj_1.grade_management.GradeManagement.input_id">
+<code class="descname">input_id</code><span class="sig-paren">(</span><em>level=1</em>, <em>input_description='Input ID'</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.input_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to check (less than 8 length )</p>
+<dl class="simple">
+<dt>Return:</dt><dd><p>A type <cite>String</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="python_proj_1.grade_management.GradeManagement.input_name">
+<code class="descname">input_name</code><span class="sig-paren">(</span><em>level=1</em>, <em>input_description='Input Name'</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.input_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to check name. The length is under 10</p>
+<dl class="simple">
+<dt>Return:</dt><dd><p>A type <cite>String</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="python_proj_1.grade_management.GradeManagement.input_options">
+<code class="descname">input_options</code><span class="sig-paren">(</span><em>opts</em>, <em>level=1</em>, <em>input_description='Input'</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.input_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to check if the file exists</p>
+<dl class="simple">
+<dt>Return:</dt><dd><p>A type <cite>string</cite> Name if first match file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="python_proj_1.grade_management.GradeManagement.input_score">
+<code class="descname">input_score</code><span class="sig-paren">(</span><em>level=1</em>, <em>input_description='Input Score'</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.input_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to check score between 0 and 100
+Return:</p>
+<blockquote>
+<div><p>A type <cite>Integer</cite></p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.modify_an_entry">
 <code class="descname">modify_an_entry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.modify_an_entry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The function to modify midterm or finalterm data of students in list</p>
+<dl class="simple">
+<dt>For example:</dt><dd><ol class="arabic simple">
+<li><p>to modify data, input student ID or name data</p></li>
+<li><p>choice a midterm or finalterm for the student</p></li>
+<li><p>Enter the student’s score</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.print_the_contents_of_all_entries">
 <code class="descname">print_the_contents_of_all_entries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.print_the_contents_of_all_entries" title="Permalink to this definition">¶</a></dt>
-<dd><p>The function to print all student credits</p>
+<dd><p>The function to print all student credits in the memory</p>
 </dd></dl>
 
 <dl class="method">
@@ -268,7 +341,8 @@ prohibit_list: Ths list of prohibit charactors</p>
 <dl class="method">
 <dt id="python_proj_1.grade_management.GradeManagement.sort_entries">
 <code class="descname">sort_entries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management.GradeManagement.sort_entries" title="Permalink to this definition">¶</a></dt>
-<dd><p>The function to sort “StudentCreditsList”.</p>
+<dd><p>The function to print sorted all student credits in the memory
+the sorting method is name, mean, grade.(</p>
 </dd></dl>
 
 <dl class="method">

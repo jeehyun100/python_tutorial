@@ -165,110 +165,85 @@
 <dt id="python_proj_1.grade_management_pandas.GradeManagementPandas">
 <em class="property">class </em><code class="descclassname">python_proj_1.grade_management_pandas.</code><code class="descname">GradeManagementPandas</code><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">grade_management.GradeManagement</span></code></p>
+<p>Manage the student’s credits with pandas library</p>
+<p>The “GradeManagementPandas” class inherits from the “GradeManagement” class</p>
 <dl class="method">
 <dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.add_a_new_entry">
 <code class="descname">add_a_new_entry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.add_a_new_entry" title="Permalink to this definition">¶</a></dt>
-<dd><p>The function to check if a file is in the directory</p>
-<dl class="simple">
-<dt>Return:</dt><dd><p>A type <cite>string</cite> Name if first match file</p>
-</dd>
-<dt>Raises:</dt><dd><p>FileNotFoundError: If file is not existing in the directory.</p>
-</dd>
-</dl>
+<dd><p>Add student info into the student list.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.calc_grade">
 <code class="descname">calc_grade</code><span class="sig-paren">(</span><em>average</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.calc_grade" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculate a grade from the average score</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.delete_an_entry">
 <code class="descname">delete_an_entry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.delete_an_entry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Delete student info from the student list.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.find_some_item_from_entry">
 <code class="descname">find_some_item_from_entry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.find_some_item_from_entry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Find students and display into the screen.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.find_student">
 <code class="descname">find_student</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.find_student" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.input_birthday">
-<code class="descname">input_birthday</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.input_birthday" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.input_id">
-<code class="descname">input_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.input_id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.input_name">
-<code class="descname">input_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.input_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.input_options">
-<code class="descname">input_options</code><span class="sig-paren">(</span><em>opts</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.input_options" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.input_score">
-<code class="descname">input_score</code><span class="sig-paren">(</span><em>test_type</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.input_score" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Find student info from the student list.
+User specifies by which mean they will find studendt.
+It would be by ID or NAME.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.merge_list">
 <code class="descname">merge_list</code><span class="sig-paren">(</span><em>new_list</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.merge_list" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Merge new list into the student list which is in the from of pandas dataframe</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.modify_an_entry">
 <code class="descname">modify_an_entry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.modify_an_entry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Modify the midterm or fianlterm score.
+User specify which test score modify.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.print_dataframe">
+<code class="descname">print_dataframe</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.print_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print Pandas dataframe with the specified header</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.print_the_contents_of_all_entries">
 <code class="descname">print_the_contents_of_all_entries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.print_the_contents_of_all_entries" title="Permalink to this definition">¶</a></dt>
-<dd><p>The function to print all student credits</p>
+<dd><p>Print the student list into the screen</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.read_personal_data">
 <code class="descname">read_personal_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.read_personal_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>The function to read data file which is student credit data.</p>
-<blockquote>
-<div><p>Recreate “StudentCreditsList” from the file.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>Raises:</dt><dd><p>Exception: While reading file has wrong.</p>
-</dd>
-</dl>
+<dd><p>Read data into the student list from the file user specified.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.sort_entries">
 <code class="descname">sort_entries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.sort_entries" title="Permalink to this definition">¶</a></dt>
-<dd><p>The function to sort “StudentCreditsList”.</p>
+<dd><p>Sort the student list by the order user specified</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="python_proj_1.grade_management_pandas.GradeManagementPandas.write_the_contents_to_the_same_file">
 <code class="descname">write_the_contents_to_the_same_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.GradeManagementPandas.write_the_contents_to_the_same_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>The function to save all student credits</p>
+<dd><p>Save the student list into the file that data had been read from.
+If the file is not specified, ask.</p>
 </dd></dl>
 
 </dd></dl>
-
-<dl class="function">
-<dt id="python_proj_1.grade_management_pandas.main">
-<code class="descclassname">python_proj_1.grade_management_pandas.</code><code class="descname">main</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#python_proj_1.grade_management_pandas.main" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </div>
 

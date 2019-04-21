@@ -8,6 +8,16 @@
 
 **백지현, 지동근, 김후빈**
 
+필수사항 ::
+
+   pandas >= 0.24.2
+
+실행방법 ::
+
+   python grade_management_pandas.py
+   python grade_management_pandas.py --pandas
+
+
 프로그램 설명 ::
 
    Program을 시작하면 아래의 메시지를 screen에 display하고 사용자의 명령어(아래에 주어진 9가지)를
