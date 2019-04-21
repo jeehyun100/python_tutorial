@@ -169,7 +169,7 @@ class GradeManagement:
             except AssertionError as e:
                 print(repr(e))
 
-    def attech_index(self):
+    def attach_index(self):
 
         for i, student in enumerate(self._student_credits_list, start=1):
             student.index = i
@@ -215,12 +215,10 @@ class GradeManagement:
 
     def find_some_item_from_entry(self):
 
-        student_list = StudentCreditsList()
-
-        for student in self.find_student():
-            student_list.append(student)
-
-        print(student_list)
+        students = self.find_student()
+        print('{:10s}{:10s}{}'.format('일련번호', '평균', 'Grade'))
+        for student in students:
+            print('{:<10d}{:<10.2f}{:<10s}'.format(student.index, student.mean, student.grade))
 
     def modify_an_entry(self):
         """The function to modify midterm or finalterm data of students in list

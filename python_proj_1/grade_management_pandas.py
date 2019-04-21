@@ -85,7 +85,8 @@ class GradeManagementPandas(GradeManagement):
     def find_some_item_from_entry(self):
         target_list = self.find_student()
 
-        print(target_list[['average', 'grade']])
+        print('{:10s}{:10s}{:10s}'.format('일련번호', '평균', 'Grade'))
+        print(target_list[['average', 'grade']].to_string(header=False, col_space=10))
 
     def modify_an_entry(self):
         target_list = self.find_student()
@@ -98,9 +99,26 @@ class GradeManagementPandas(GradeManagement):
         else:
             self.student_list[self.student_list.index == target_list.index].finalterm = score
 
+    def print_dataframe(self, df):
+        header = [
+                '일련번호',
+                '학생 id',
+                '이름',
+                '생년월일',
+                '중간고사',
+                '기말고사',
+                '평균',
+                'Grade'
+            ]
+
+        header_str = '{:10s}' * len(header)
+        print(header_str.format(*header))
+        print(df.to_string(header=False, col_space=10))
+
     def print_the_contents_of_all_entries(self):
+
         if len(self.student_list):
-            print(self.student_list)
+            self.print_dataframe(self.student_list)
         else:
             print('There is no contents to show')
 
@@ -127,11 +145,11 @@ class GradeManagementPandas(GradeManagement):
 
         opt = self.input_options(['n', 'a', 'g'], 1, 'Sort by name(n) or average(a) or grade(g)')
         if opt.upper() == 'N':
-            print(self.student_list.sort_values(by=['name', 'average'], ascending=[True,False]))
+            self.print_dataframe(self.student_list.sort_values(by=['name', 'average'], ascending=[True,False]))
         elif opt.upper() == 'A':
-            print(self.student_list.sort_values(by=['average', 'name'], ascending=[False,True]))
+            self.print_dataframe(self.student_list.sort_values(by=['average', 'name'], ascending=[False,True]))
         elif opt.upper() == 'G':
-            print(self.student_list.sort_values(by=['average', 'name'], ascending=[False,True]))
+            self.print_dataframe(self.student_list.sort_values(by=['average', 'name'], ascending=[False,True]))
 
     def write_the_contents_to_the_same_file(self):
         """The function to save all student credits
