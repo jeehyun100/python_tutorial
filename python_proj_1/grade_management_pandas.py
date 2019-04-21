@@ -93,7 +93,9 @@ class GradeManagementPandas(GradeManagement):
         """
         target_list = self.find_student()
 
-        if len(target_list):
+        if not len(target_list):
+            print('There is no contents to show')
+        else:
             print('You selected the list below.')
             self.print_dataframe(target_list)
             opt = self.input_options(['y', 'n'], 1, 'Do you really want to delete?')
@@ -111,8 +113,11 @@ class GradeManagementPandas(GradeManagement):
         """
         target_list = self.find_student()
 
-        print('{:10s}{:10s}{:10s}'.format('일련번호', '평균', 'Grade'))
-        print(target_list[['average', 'grade']].to_string(header=False, col_space=10))
+        if not len(target_list):
+            print('There is no contents to show')
+        else:
+            print('{:10s}{:10s}{:10s}'.format('일련번호', '평균', 'Grade'))
+            print(target_list[['average', 'grade']].to_string(header=False, col_space=10))
 
     def modify_an_entry(self):
         """
@@ -121,13 +126,18 @@ class GradeManagementPandas(GradeManagement):
         """
         target_list = self.find_student()
 
-        opt = self.input_options(['midterm', 'finalterm'], 1, 'Which test do you want to modify?')
-        score = self.input_score()
-
-        if opt.upper() == 'MIDTERM':
-            self.student_list[self.student_list.index == target_list.index].midterm = score
+        if not len(target_list):
+            print('There is no contents to show')
         else:
-            self.student_list[self.student_list.index == target_list.index].finalterm = score
+            opt = self.input_options(['midterm', 'finalterm'], 1, 'Which test do you want to modify?')
+            score = self.input_score()
+
+            if opt.upper() == 'MIDTERM':
+                for idx in target_list.index:
+                    self.student_list.loc[self.student_list.index == idx, 'midterm'] = score
+            else:
+                for idx in target_list.index:
+                    self.student_list.loc[self.student_list.index == idx, 'finalterm'] = score
 
     def print_dataframe(self, df):
         """
