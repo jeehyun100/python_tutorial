@@ -6,9 +6,15 @@ from grade_management import GradeManagement
 
 
 class GradeManagementPandas(GradeManagement):
+    """
+    Manage the student's credits with pandas library
+
+    The "GradeManagementPandas" class inherits from the "GradeManagement" class
+    """
 
     def __init__(self):
         self.columns = ['id', 'name', 'birthday', 'midterm', 'finalterm', 'average', 'grade']
+        self.columns_to_save = ['id', 'name', 'birthday', 'midterm', 'finalterm']
         self.dtype = {
             'id': 'object',
             'name': 'object',
@@ -25,12 +31,18 @@ class GradeManagementPandas(GradeManagement):
         self._filename = None
 
     def merge_list(self, new_list):
+        """
+        Merge new list into the student list which is in the from of pandas dataframe
+        """
         self.student_list = self.student_list.append(new_list, sort=False, ignore_index=True)
         self.student_list.index = self.student_list.index + 1
         self.student_list.average = self.student_list[['midterm', 'finalterm']].mean(axis=1)
         self.student_list.grade = self.student_list.average.apply(self.calc_grade)
 
     def calc_grade(self, average):
+        """
+        Calculate a grade from the average score
+        """
         if 95 <= average:
             return 'S'
         elif 90 <= average:
@@ -45,6 +57,11 @@ class GradeManagementPandas(GradeManagement):
             return 'F'
 
     def find_student(self):
+        """
+        Find student info from the student list.
+        User specifies by which mean they will find studendt.
+        It would be by ID or NAME.
+        """
         opt = self.input_options(['id', 'name'], 1, 'How do you want to find the student?')
         if opt.upper() == 'ID':
             id = self.input_id(1, "Input ID of Student You're Looking for")
@@ -54,6 +71,9 @@ class GradeManagementPandas(GradeManagement):
             return self.student_list[self.student_list.name == name]
 
     def add_a_new_entry(self):
+        """
+        Add student info into the student list.
+        """
         id = self.input_id()
         name = self.input_name()
         birthday = self.input_birthday()
@@ -68,6 +88,9 @@ class GradeManagementPandas(GradeManagement):
         self.merge_list(new_list)
 
     def delete_an_entry(self):
+        """
+        Delete student info from the student list.
+        """
         target_list = self.find_student()
 
         if len(target_list):
@@ -83,12 +106,19 @@ class GradeManagementPandas(GradeManagement):
                     self.student_list.index = self.student_list.index + 1
 
     def find_some_item_from_entry(self):
+        """
+        Find students and display into the screen.
+        """
         target_list = self.find_student()
 
         print('{:10s}{:10s}{:10s}'.format('일련번호', '평균', 'Grade'))
         print(target_list[['average', 'grade']].to_string(header=False, col_space=10))
 
     def modify_an_entry(self):
+        """
+        Modify the midterm or fianlterm score.
+        User specify which test score modify.
+        """
         target_list = self.find_student()
 
         opt = self.input_options(['midterm', 'finalterm'], 1, 'Which test do you want to modify?')
@@ -100,6 +130,9 @@ class GradeManagementPandas(GradeManagement):
             self.student_list[self.student_list.index == target_list.index].finalterm = score
 
     def print_dataframe(self, df):
+        """
+        Print Pandas dataframe with the specified header
+        """
         header = [
                 '일련번호',
                 '학생 id',
@@ -116,6 +149,9 @@ class GradeManagementPandas(GradeManagement):
         print(df.to_string(header=False, col_space=10))
 
     def print_the_contents_of_all_entries(self):
+        """
+        Print the student list into the screen
+        """
 
         if len(self.student_list):
             self.print_dataframe(self.student_list)
@@ -123,6 +159,9 @@ class GradeManagementPandas(GradeManagement):
             print('There is no contents to show')
 
     def read_personal_data(self):
+        """
+        Read data into the student list from the file user specified.
+        """
         self._filename = self.input_filename()
         try:
             new_list = pd.read_csv(
@@ -139,6 +178,9 @@ class GradeManagementPandas(GradeManagement):
             print('The file is empty.')
 
     def sort_entries(self):
+        """
+        Sort the student list by the order user specified
+        """
         if not len(self.student_list):
             print('There is no contents to sort')
             return
@@ -150,8 +192,9 @@ class GradeManagementPandas(GradeManagement):
             self.print_dataframe(self.student_list.sort_values(by=['average', 'name'], ascending=[False,True]))
 
     def write_the_contents_to_the_same_file(self):
-        """The function to save all student credits
-
+        """
+        Save the student list into the file that data had been read from.
+        If the file is not specified, ask.
         """
         if not len(self.student_list):
             print('There is no contents to write')
@@ -161,7 +204,8 @@ class GradeManagementPandas(GradeManagement):
             self._filename = self.input_filename()
 
         with open(self._filename, 'w') as OUT:
-            OUT.write(self.student_list.to_string(header=False, index_names=False))
+            OUT.write(self.student_list.to_csv(
+                sep='\t', header=False, columns=self.columns_to_save))
         print(f'Data are saved into {self._filename!r}')
 
 if __name__ == '__main__':
