@@ -14,8 +14,21 @@
 
 실행방법 ::
 
-   python grade_management_pandas.py
-   python grade_management_pandas.py --pandas
+    Standard version :
+        python run.py
+    Pandas version:
+        python run.py -p
+
+작업내용 ::
+    설계
+        Standard version : 백지현
+        Pandas version : 지동근
+    구현
+        Standard vesion : 백지현, 김후빈
+        Pandas version : 지동근
+
+    테스트 : 김후빈
+    문서화 : 백지현, 지동근, 김후빈
 
 
 프로그램 설명 ::

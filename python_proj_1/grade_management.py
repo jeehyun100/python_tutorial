@@ -105,6 +105,7 @@ class GradeManagement:
 
     def input_score(self, level=1, input_description='Input Score'):
         """The function to check score between 0 and 100
+        
         Return:
              A type `Integer`
         """
