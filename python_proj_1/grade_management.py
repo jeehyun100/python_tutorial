@@ -192,7 +192,7 @@ class GradeManagement:
         self._student_credits_list.append(
             Students((0, id, name, birthday, midterm, finalterm)))
 
-        self.attech_index()
+        self.attach_index()
 
     def find_student(self):
 
@@ -290,7 +290,7 @@ class GradeManagement:
         except Exception as e:
             print("Data file 을 읽다가 오류가 발생했습니다. [{0}]".format(e.__repr__()))
 
-        self.attech_index()
+        self.attach_index()
         self.print_the_contents_of_all_entries()
 
     def sort_entries(self):
