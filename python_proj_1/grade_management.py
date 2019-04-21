@@ -175,14 +175,10 @@ class GradeManagement:
             student.index = i
 
     def add_a_new_entry(self):
-        """The function to check if a file is in the directory
-
-        Return:
-             A type `string` Name if first match file
-        Raises:
-            FileNotFoundError: If file is not existing in the directory.
-
         """
+        Add student info into the student list.
+        """
+
         id = self.input_id()
         name = self.input_name()
         birthday = self.input_birthday()
@@ -195,23 +191,42 @@ class GradeManagement:
         self.attach_index()
 
     def find_student(self):
-
+        """
+        Add student info into the student list.
+        """
         opt = self.input_options(['id', 'name'], 1, 'How do you want to find the student?')
         if opt.upper() == 'ID':
             id = self.input_id(1, "Input ID of Student You're Looking for")
             return (
-                filter(lambda item: item._id == id, self._student_credits_list)
+                list(filter(lambda item: item._id == id, self._student_credits_list))
             )
         else:
             name = self.input_name(1, "Input Name of Student You're Looking for")
             return (
-                filter(lambda item: item._name == name, self._student_credits_list)
+                list(filter(lambda item: item._name == name, self._student_credits_list))
             )
 
     def delete_an_entry(self):
+        """
+        Delete student info from the student list.
+        """
+        students = self.find_student()
 
-        for student in self.find_student():
-            self._student_credits_list.remove(student)
+        if len(students):
+            print('You selected the list below.')
+
+            student_list_for_print = StudentCreditsList()
+            for student in students:
+                student_list_for_print.append(student)
+            print(student_list_for_print)
+
+            opt = self.input_options(['y', 'n'], 1, 'Do you really want to delete?')
+
+            if opt.upper() == 'Y':
+                for student in students:
+                    self._student_credits_list.remove(student)
+
+                self.attach_index()
 
     def find_some_item_from_entry(self):
 

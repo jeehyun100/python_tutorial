@@ -95,7 +95,7 @@ class GradeManagementPandas(GradeManagement):
 
         if len(target_list):
             print('You selected the list below.')
-            print(target_list)
+            self.print_dataframe(target_list)
             opt = self.input_options(['y', 'n'], 1, 'Do you really want to delete?')
 
             if opt.upper() == 'Y':
@@ -174,8 +174,8 @@ class GradeManagementPandas(GradeManagement):
             )
 
             self.merge_list(new_list)
-        except pd.errors.EmptyDataError:
-            print('The file is empty.')
+        except pd.errors.EmptyDataError as e:
+            print(f'The file is empty [{e!r}].')
 
     def sort_entries(self):
         """
