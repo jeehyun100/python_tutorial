@@ -2,8 +2,6 @@ import os
 import datetime
 from student_credits_list import StudentCreditsList
 from students import Students
-from students0 import Students0
-
 
 class GradeManagement:
     """ Manage the student's credits
@@ -43,10 +41,22 @@ class GradeManagement:
         print(help_message)
 
     def input_(self, level=0, input_description=''):
+        """ Base input function
+
+        Return:
+             A type input function
+
+        """
         tabs = self.tabs * level
         return input(tabs + input_description)
 
     def input_id(self, level=1, input_description='Input ID'):
+        """The function to check (less than 8 length )
+
+        Return:
+             A type `String`
+
+        """
         while True:
             id = self.input_(
                 level,
@@ -59,12 +69,28 @@ class GradeManagement:
                 print(self.tabs * (level+1), "Wrong input.")
 
     def input_name(self, level=1, input_description='Input Name'):
-        name = self.input_(level, input_description + ' : ')
-        print(self.tabs * (level+1), f'Your Input: {name!r}')
+        """The function to check name. The length is under 10
 
-        return name
+        Return:
+             A type `String`
+
+        """
+        while True:
+            name = self.input_(level, input_description + ' : ')
+
+            if len(name) <= 10:
+                print(self.tabs * (level+1), f'Your Input: {name!r}')
+                return name
+            else:
+                print(self.tabs * (level + 1), "Wrong input.")
 
     def input_birthday(self, level=1, input_description='Input Birthday'):
+        """The function to check birthdate
+
+        Return:
+             A type `datetime.str`
+
+        """
         while True:
             birthday = self.input_(
                 level,
@@ -78,6 +104,10 @@ class GradeManagement:
                 return birthday
 
     def input_score(self, level=1, input_description='Input Score'):
+        """The function to check score between 0 and 100
+        Return:
+             A type `Integer`
+        """
         while True:
             score = self.input_(
                 level,
@@ -91,6 +121,12 @@ class GradeManagement:
                 print(self.tabs * (level+1), "Wrong input.")
 
     def input_options(self, opts, level=1, input_description='Input'):
+        """The function to check if the file exists
+
+        Return:
+             A type `string` Name if first match file
+
+        """
         opts = list(map(lambda x: str(x), opts))
         opts = list(map(lambda x: x.upper(), opts))
         q_str = (
@@ -112,8 +148,7 @@ class GradeManagement:
 
         Return:
              A type `string` Name if first match file
-        Raises:
-            FileNotFoundError: If the file is not existing in the directory.
+
         """
         while True:
             filename = self.input_(
@@ -159,7 +194,6 @@ class GradeManagement:
             ValueError: If input value has the wrong.
 
         """
-
         while True:
             try:
                 input_string = input(input_description).upper()
@@ -202,6 +236,8 @@ class GradeManagement:
             )
         else:
             name = self.input_name(1, "Input Name of Student You're Looking for")
+
+            # item[0] : index, and item[1] : Student class
             return (
                 list(filter(lambda item: item._name == name, self._student_credits_list))
             )
@@ -225,8 +261,9 @@ class GradeManagement:
             if opt.upper() == 'Y':
                 for student in students:
                     self._student_credits_list.remove(student)
-
                 self.attach_index()
+            else:
+                print("Delete canceled.")
 
     def find_some_item_from_entry(self):
 
