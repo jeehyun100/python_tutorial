@@ -204,6 +204,9 @@ class GradeManagement:
                 print(repr(e))
 
     def attach_index(self):
+        """
+        Rendexing
+        """
 
         for i, student in enumerate(self._student_credits_list, start=1):
             student.index = i
@@ -266,6 +269,9 @@ class GradeManagement:
                 print("Delete canceled.")
 
     def find_some_item_from_entry(self):
+        """The function to print index, mean, grade infomation of student
+
+        """
 
         students = self.find_student()
         print('{:10s}{:10s}{}'.format('일련번호', '평균', 'Grade'))
@@ -282,16 +288,18 @@ class GradeManagement:
         """
 
         students = self.find_student()
+        if len(students) > 0:
+            opt = self.input_options(['midterm', 'finalterm'], 1, 'Which test do you want to modify?')
+            score = self.input_score()
 
-        opt = self.input_options(['midterm', 'finalterm'], 1, 'Which test do you want to modify?')
-        score = self.input_score()
-
-        if opt.upper() == 'MIDTERM':
-            for student in students:
-                student.midterm = score
+            if opt.upper() == 'MIDTERM':
+                for student in students:
+                    student.midterm = score
+            else:
+                for student in students:
+                    student.finalterm = score
         else:
-            for student in students:
-                student.finalterm = score
+            print("No Data")
 
     def print_the_contents_of_all_entries(self):
         """The function to print all student credits in the memory
