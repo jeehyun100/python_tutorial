@@ -257,11 +257,13 @@ class GradeManagement:
             print(student_list_for_print)
 
             opt = self.input_options(['y', 'n'], 1, 'Do you really want to delete?')
-
+            count=0
             if opt.upper() == 'Y':
                 for student in students:
                     self._student_credits_list.remove(student)
+                    count=count+1
                 self.attach_index()
+                print(" ",count, " rows deleted")
             else:
                 print("Delete canceled.")
 
@@ -292,6 +294,8 @@ class GradeManagement:
         else:
             for student in students:
                 student.finalterm = score
+
+        print("rows modified")
 
     def print_the_contents_of_all_entries(self):
         """The function to print all student credits in the memory
@@ -383,7 +387,7 @@ class GradeManagement:
             elif input_string.upper() == 'S':
                 self.sort_entries()
             elif input_string.upper() == 'Q':
-                input_string=input('(Y,N)before you quit, Do you want to save?')
+                input_string=input(' (Y,N) before you quit, Do you want to save? : ')
                 if(input_string == 'Y'):
                     self.write_the_contents_to_the_same_file()
                     break
