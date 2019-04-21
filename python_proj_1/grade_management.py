@@ -383,8 +383,13 @@ class GradeManagement:
             elif input_string.upper() == 'S':
                 self.sort_entries()
             elif input_string.upper() == 'Q':
-                # Quit the program
-                break
+                input_string=input('(Y,N)before you quit, Do you want to save?')
+                if(input_string == 'Y'):
+                    self.write_the_contents_to_the_same_file()
+                    break
+                else :
+                    # Quit the program
+                    break
             elif input_string.upper() == 'W':
                 self.write_the_contents_to_the_same_file()
             elif input_string.upper() == 'H':
