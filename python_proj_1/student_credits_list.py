@@ -28,7 +28,9 @@ class StudentCreditsList(MutableSequence):
               String,
 
         """
-        return '\n'.join(str(list_v) for list_v in self._list)
+        # for list_v in self._list:
+        #     print(list_v)
+        return '\n'.join(repr(list_v) for list_v in self._list)
 
     def __len__(self):
         """The Length of list

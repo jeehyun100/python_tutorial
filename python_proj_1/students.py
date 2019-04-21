@@ -60,6 +60,19 @@ class Students:
 
     __repr__ = __str__
 
+    def __repr__(self):
+        """String representation of an students class for save
+
+        return:
+              String, split char '\t'
+
+        """
+        return u"{0} {1} {2} {3} {4} {5} {6} {7}".format(
+            str(self._index).ljust(8, " "), str(self._id).ljust(8, " "),
+            str(self._name).ljust(8, " "), str(self._birthday).ljust(8, " "),
+            str(self._midterm).ljust(8, " "), str(self._finalterm).ljust(8, " "),
+            str('').ljust(8, " "), str('').ljust(8, " "))
+
     def cal_mean_grade(self):
         """Calculate grade
 
