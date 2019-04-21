@@ -223,6 +223,17 @@ class GradeManagement:
         print(student_list)
 
     def modify_an_entry(self):
+        """The function to modify midterm or finalterm data of students in list
+
+        For example:
+            1) to modify data, input student ID or name data
+            2) choice a midterm or finalterm for the student
+            3) Enter the student's score
+
+        Raises:
+            FileNotFoundError: If file is not existing in the directory.
+
+        """
         input_description_1 = "(수정모드) [ID] 또는 [이름]을 하시오 : "
         input_description_2 = "(수정모드) [중간점수](1) 또는 [기말점수](2)를 선택하시오 : "
         while True:
@@ -230,8 +241,6 @@ class GradeManagement:
                 input_string_1 = input(input_description_1)
                 with open("data.txt",'r+',encoding='UTF-8') as f:
                     lines_all = f.readlines()
-                    #student_ord = [line.split() for line in lines_all]
-                    #[print(student_ord[i])for i in range(len(student_ord))]
                     student = [Students0(line.split()) for line in lines_all]
                     print(student)
                     student_obj=StudentCreditsList(student)
@@ -251,27 +260,9 @@ class GradeManagement:
                                 break
                 print(student_obj)
                 StudentCreditsList.save(student_obj,"./data.txt")
-
-                print(student_obj)
-                StudentCreditsList.save(student_obj,"./data.txt")
-
             except FileNotFoundError as e:
                 print(repr(e))
-            self.print_the_contents_of_all_entries()
 
-
-            # First Load datafile
-            # r
-            #
-            # ID와 이름으로 대상을 찾아서 해당 row의 index를 가져온다
-            # results = list(filter(lambda item: (item[1]._name == input_value or item[1]._id == input_value),enumerate(self._student_credits_list)))
-            #
-            # how to access student class
-            # for _idx, _r in enumerate(results, 1):
-            #     print("[{0}/{1}] : {2}({3})님의 중간시험 점수 {4}, 기말시험 점수 {5} 는 입니다.".format(_idx, len(results),
-            #                                                                          _r[1]._name,
-            # how to save
-            # _student_credits_list.save()
 
     def print_the_contents_of_all_entries(self):
         """The function to print all student credits in the memory
@@ -305,6 +296,10 @@ class GradeManagement:
         self.print_the_contents_of_all_entries()
 
     def sort_entries(self):
+        """The function to print sorted all student credits in the memory
+        the sorting method is name, mean, grade.(
+
+        """
         with open("data.txt",encoding='UTF-8') as f:
             lines_all = f.readlines()
         print_s = [Students(line.split()) for line in lines_all] #studnet 객체 생성
@@ -314,7 +309,6 @@ class GradeManagement:
         name_sort=[]
         for student_list in print_str_row:
             list.append(student_list)
-        #print(list[0]._name)
         input_description_1="(정렬모드) 이름순?(n), 평균점수순?(a), grade순?(g) : "
         input_string = input(input_description_1)
         print(len(list))
@@ -334,7 +328,6 @@ class GradeManagement:
                 for y in range(len(list)):
                     if(str(sort[x])==list[y]._name):
                         print(list[y])
-            #print(name_sort)
         elif(input_string == 'g'):
             for i in range(len(list)):
                 for j in range(len(list)-i-1):
