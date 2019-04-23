@@ -31,7 +31,7 @@ https://jeehyun100.github.io/python_tutorial/
 * grade_management_pandas : 판다스용 학점 관리
 
 ## How to run
-* Standard version
-    	python ./python_proj_1/run.py
+* Standard version :
+```python ./python_proj_1/run.py```
 * Pandas version :
-    	python ./python_proj_1/rrun.py -p
+```python ./python_proj_1/rrun.py -p```
