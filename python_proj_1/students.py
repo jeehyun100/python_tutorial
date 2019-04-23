@@ -68,10 +68,10 @@ class Students:
 
         """
         return u"{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}".format(
-            str(self._index).ljust(8, " "), str(self._id).ljust(8, " "),
-            str(self._name).ljust(10, " "), str(self._birthday).ljust(8, " "),
-            str(self._midterm).ljust(8, " "), str(self._finalterm).ljust(8, " "),
-            str('').ljust(8, " "), str('').ljust(8, " "))
+            str(self._index), str(self._id),
+            str(self._name), str(self._birthday),
+            str(self._midterm), str(self._finalterm),
+            str(''), str(''))
 
     def cal_mean_grade(self):
         """Calculate grade

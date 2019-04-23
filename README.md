@@ -32,6 +32,6 @@ https://jeehyun100.github.io/python_tutorial/
 
 ## How to run
 * Standard version
-    	python run.py
+    	python ./python_proj_1/run.py
 * Pandas version :
-    	python run.py -p
+    	python ./python_proj_1/rrun.py -p
