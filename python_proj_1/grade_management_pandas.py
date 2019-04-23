@@ -214,7 +214,7 @@ class GradeManagementPandas(GradeManagement):
             self._filename = self.input_filename()
 
         with open(self._filename, 'w') as OUT:
-            OUT.write(self.student_list.to_csv(
+            OUT.write(self.student_list.to_csv(date_format='%Y-%m-%d',
                 sep='\t', header=False, columns=self.columns_to_save))
         print(f'Data are saved into {self._filename!r}')
 
