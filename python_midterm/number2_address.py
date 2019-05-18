@@ -17,7 +17,7 @@ def region_book(area_number):
     """
     Find store info using value of area number.
     """
-    print(df[df['tel'].str.contains(area_number+"-")])
+    print(df[df['tel'].str.match(area_number+"-")])
 
 if __name__ == "__main__":
     """
