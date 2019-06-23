@@ -1,146 +1,134 @@
+# -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 import numpy as np
 import cv2
-#plt.interactive(True)
-buf = plt.imread('q1.png')
-#buf = cv2.imread('q1.png')
-
-tmp_r = np.zeros(buf.shape, dtype=buf.dtype)
-tmp_g = np.zeros(buf.shape, dtype=buf.dtype)
-tmp_b = np.zeros(buf.shape, dtype=buf.dtype)
-#tmp_im[:, :, c] = im[:, :, c]
-#
-
-buf_bgr = np.zeros(buf.shape, dtype=buf.dtype)
-
-tmp_r[:,:,0] = buf[:,:,0]
-tmp_g[:,:,1] = buf[:,:,1]
-tmp_b[:,:,2] = buf[:,:,2]
-
-buf_bgr[:,:,0] = buf[:,:,1]
-buf_bgr[:,:,1] = buf[:,:,2]
-buf_bgr[:,:,2] = buf[:,:,0]
+# matplot이 안보이면 아래 커맨드를 실행
+# plt.interactive(True)
 
 
-if tmp_r.dtype != np.uint8:
-    tmp_r = (255*tmp_r).astype(np.uint8)
-if tmp_g.dtype != np.uint8:
-    tmp_g = (255*tmp_g).astype(np.uint8)
-if tmp_b.dtype != np.uint8:
-    tmp_b = (255*tmp_b).astype(np.uint8)
-R_max = tmp_r[:,:,0].max()
-R_arg = tmp_r[:,:,0].mean()
+def read_img(file_name, read_type='plt'):
+    """
+    File name으로 그림파일을 읽는 기능
+    read type으로 matplot으로 읽을지 opencv로 읽을지 결정한다.
+
+    Args:
+        file_name, String: 카드의 모양, ['Hearts', 'Clubs', 'Diamonds', 'Spades']
+        read_type, plt or not plt
+
+    return:
+        numpy.array: The image data
+    """
+    if read_type == 'plt':
+        _buf = plt.imread(file_name)
+    else:
+        _buf = cv2.imread(file_name, 1)
+        _buf = cv2.cvtColor(_buf, cv2.COLOR_BGR2RGB)
+    return _buf
 
 
-G_max = tmp_g[:,:,1].max()
-G_arg = tmp_g[:,:,1].mean()
+def split_channel(buf_arr):
+    """
+    채널을 분리하고, 각 채널별로 최대값과 평균값을 구하는 기능
 
-B_max = tmp_b[:,:,2].max()
-B_arg = tmp_b[:,:,2].mean()
+    Args:
+        buf_arr, numpy.array: The image data
 
-r_max_anno = "R_max : {0}".format(R_max)
-r_arg_anno = "R_arg : {0}".format(round(R_arg,2))
-g_max_anno = "G_max : {0}".format(G_max)
-g_arg_anno = "G_arg : {0}".format(round(G_arg,2))
-b_max_anno = "B_max : {0}".format(B_max)
-b_arg_anno = "B_arg : {0}".format(round(B_arg,2))
+    return:
+        tuple, tuple, tuple: (Red channel array, max value, mean value), Green tuple, Blue tuple
+    """
+    # 채널을 분리할 numpy array 생성
+    _tmp_r = np.zeros(buf_arr.shape, dtype=buf_arr.dtype)
+    _tmp_g = np.zeros(buf_arr.shape, dtype=buf_arr.dtype)
+    _tmp_b = np.zeros(buf_arr.shape, dtype=buf_arr.dtype)
 
+    # 각 채널별로 복사
+    _tmp_r[:, :, 0] = buf_arr[:, :, 0]
+    _tmp_g[:, :, 1] = buf_arr[:, :, 1]
+    _tmp_b[:, :, 2] = buf_arr[:, :, 2]
 
-#fig, ((ax1,ax2), (ax3,ax4),(ax5, ax6)) = plt.subplots(3, 2)
+    # matplot은 값이 normalize되어 있어서 255를 곱해서 원래 값으로 복원
+    if _tmp_r.dtype != np.uint8:
+        _tmp_r = (255*_tmp_r).astype(np.uint8)
+    if _tmp_g.dtype != np.uint8:
+        _tmp_g = (255*_tmp_g).astype(np.uint8)
+    if _tmp_b.dtype != np.uint8:
+        _tmp_b = (255*_tmp_b).astype(np.uint8)
 
-fig = plt.figure(figsize=(7,7))
-#(ax1, ax2), (ax3, ax4) = axs
-fig.suptitle('Problem 2')
+    # 각채널별로 max와 mean을 구함
+    _r_max = _tmp_r[:, :, 0].max()
+    _r_arg = _tmp_r[:, :, 0].mean()
+    _g_max = _tmp_g[:, :, 1].max()
+    _g_arg = _tmp_g[:, :, 1].mean()
+    _b_max = _tmp_b[:, :,  2].max()
+    _b_arg = _tmp_b[:, :, 2].mean()
 
-
-ax1 = fig.add_subplot(3,2,1)
-ax1.imshow(buf)
-ax1.title.set_text('Original')
-ax1.set_xticks([])
-ax1.set_yticks([])
-
-bbox_props_f = dict(boxstyle='round', fc='w', lw=2)
-
-ax2 = fig.add_subplot(3,2,2)
-ax2.imshow(tmp_r)
-ax2.title.set_text('Red')
-ax2.set_xticks([])
-ax2.set_yticks([])
-ax2.annotate(r_max_anno, xy=(170,80), bbox=bbox_props_f)
-ax2.annotate(r_arg_anno, xy=(170,160), bbox=bbox_props_f)
-
-ax3 = fig.add_subplot(3,2,3)
-ax3.imshow(tmp_g)
-ax3.title.set_text('Green')
-ax3.set_xticks([])
-ax3.set_yticks([])
-ax3.annotate(g_max_anno, xy=(170,80), bbox=bbox_props_f)
-ax3.annotate(g_arg_anno, xy=(170,160), bbox=bbox_props_f)
-
-ax4 = fig.add_subplot(3,2,4)
-ax4.imshow(tmp_b)
-ax4.title.set_text('Blue')
-ax4.set_xticks([])
-ax4.set_yticks([])
-ax4.annotate(b_max_anno, xy=(170,80), bbox=bbox_props_f)
-ax4.annotate(b_arg_anno, xy=(170,160), bbox=bbox_props_f)
-# for ax in axs.flat:
-#     ax.label_outer()
-#
-# plt.imshow(tmp_r)
-ax5 = fig.add_subplot(3,2,5)
-ax5.title.set_text('Convert G B R')
-ax5.imshow(buf_bgr)
-ax5.set_xticks([])
-ax5.set_yticks([])
+    return (_tmp_r, _r_max, _r_arg), (_tmp_g, _g_max, _g_arg), (_tmp_b, _b_max, _b_arg)
 
 
-plt.show()
+def change_channel(buf_arr):
+    """
+    GBR로 채널을 변경하는 기능
+
+    Args:
+        buf_arr, numpy.array: The image data
+
+    return:
+        buf_arr, numpy.array: The converted image data (G, B, R)
+    """
+    _buf_bgr = np.zeros(buf_arr.shape, dtype=buf_arr.dtype)
+    _buf_bgr[:, :, 0] = buf_arr[:, :, 1]
+    _buf_bgr[:, :, 1] = buf_arr[:, :, 2]
+    _buf_bgr[:, :, 2] = buf_arr[:, :, 0]
+    return _buf_bgr
 
 
+def plot_with_anno_helper(figure, buf_arr, index, arr_max=0, arr_arg=0, channel='A'):
+    """
+    문제 2번에 맞게 plotting 을 도와주는 기능
 
-#
-# def split_into_rgb_channels(image):
-#   '''Split the target image into its red, green and blue channels.
-#   image - a numpy array of shape (rows, columns, 3).
-#   output - three numpy arrays of shape (rows, columns) and dtype same as
-#            image, containing the corresponding channels.
-#   '''
-#   red = image[:,:,2]
-#   green = image[:,:,1]
-#   blue = image[:,:,0]
-#   return red, green, blue
-#
-# #[b,g,r]=np.dsplit(buf,buf.shape[-1])
-# #
-# # # USING OPENCV SPLIT FUNCTION
-# #b,g,r=cv2.split(buf)
+    Args:
+        figure, matplotlib.figure :
+        buf_arr, numpy.array : The image data
+        index, Integer : sub plot index
+        arr_max, Float : Max value of the image data
+        arr_arg, Float : Mean value of the imege data
+        channel, String : Channel name 예) R, G, G
 
-#
-# red, green, blue = split_into_rgb_channels(buf)
-# img = np.zeros((values.shape[0], values.shape[1], 3), dtype=values.dtype)
-# img[:, :, channel] = values
-
-
-
-
-# #print img
-# for values, color, channel in zip((red, green, blue), ('red', 'green', 'blue'), (2,1,0)):
-#     img = np.zeros((values.shape[0], values.shape[1], 3),dtype = values.dtype)
-#     img[:,:,channel] = values
-#     #print "Saving Image: {}.".format(name+color+ext)
-#     while True:
-#       cv2.imshow('test', img)
-#       # print('output {}'.format(b))
-#       if cv2.waitKey(25) & 0xFF == ord('q'):
-#           cv2.destroyAllWindows()
-#           break
-#           #cv2.imwrite(os.path.join(dirname, name+color+ext), img)
-#
-# print("dfada")
-#plt.show()
+    """
+    ax2 = figure.add_subplot(3, 2, index)
+    ax2.imshow(buf_arr)
+    # 인덱스 별로 subplot의 Title을 그리기 위한 list
+    titles = ['Original', 'Red', 'Green', 'Blue', 'Convert GBR']
+    ax2.title.set_text(titles[index-1])
+    # x,y축은 표시 안함
+    ax2.set_xticks([])
+    ax2.set_yticks([])
+    # Original 과 convert GBR은 주석을 표시 안함
+    if channel != 'A':
+        bbox_props_f = dict(boxstyle='round', fc='w', lw=2)
+        r_max_anno = "{0}_max : {1}".format(channel, arr_max)
+        r_arg_anno = "{0}_arg : {1}".format(channel, round(arr_arg, 2))
+        ax2.annotate(r_max_anno, xy=(50, 70), bbox=bbox_props_f)
+        ax2.annotate(r_arg_anno, xy=(50, 160), bbox=bbox_props_f)
 
 
+if __name__ == "__main__":
+    # 전체 plot을 설정한다. 이름을 Problem 2로 한다.
+    fig = plt.figure(figsize=(7, 7))
+    fig.suptitle('Problem 2')
 
+    # 문제 2.(가)의 답
+    # q1.png를 읽고 plotting 한다.
+    buf = read_img('q1.png', 'plt')
+    plot_with_anno_helper(fig, buf, 1)
 
+    # 문제 2.(나)의 답
+    (r_buf, r_max, r_arg), (g_buf, g_max, g_arg), (b_buf, b_max, b_arg) = split_channel(buf)
+    plot_with_anno_helper(fig, r_buf, 2, r_max, r_arg, "R")
+    plot_with_anno_helper(fig, g_buf, 3, g_max, g_arg, "G")
+    plot_with_anno_helper(fig, b_buf, 4, b_max, b_arg, "B")
+
+    # 문제 2.(다)의 답
+    change_buf = change_channel(buf)
+    plot_with_anno_helper(fig, change_buf, 5)
+    plt.show()

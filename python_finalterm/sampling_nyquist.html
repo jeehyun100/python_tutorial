@@ -1,0 +1,186 @@
+
+<head>
+<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+<input type="button" id="playbutton" value="&#9654 Play" onClick="player();">
+<div id="box" class="jxgbox" style="width:800px; height:400px;"></div>
+Original signal: <input type="text" id="fo" > Hz
+<input type="button" id="updateText" value="update" onClick="updateText();">
+<br> Sampled signal:
+<p></p>
+<p id="demo"></p>
+<div id="box2" class="jxgbox" style="width:800px; height:200px;"></div>
+
+<script type="text/javascript">
+
+// ---------------- Board 1 : Time Domain ------------------------------------------//
+
+var board = JXG.JSXGraph.initBoard('box', {boundingbox: [0, 2, 0.3, -3], axis:true, grid:true, showCopyright:false, showNavigation:false});
+var txt2 = board.create('text',[0.005,1.8, 'Time Domain'], {fontSize:13});
+
+// sliders
+var pi =  Math.PI ;
+var phi = 0;
+var sMin = 0;
+var sMax = 40;
+var slider = board.create('slider',[[0,-1.5],[0.2,-1.5],[sMin,0,sMax]],{name:'Original Frequency'});
+var slider2 = board.create('slider',[[0,-2.0],[0.2,-2.0],[sMin,20,sMax]],{name:'Sampling Frequency'});
+phase = board.create('slider',[[0,-2.5],[0.2,-2.5],[-pi,0,pi]],{name:'Phase'});
+
+coeff = slider.Value();
+
+// original sinusoid
+var graph = board.create('functiongraph', [function(x){
+var frequency= slider.Value();
+return Math.cos(frequency * x * 2 * pi +  phase.Value());
+}],{strokeColor: 'blue',strokeWidth:2})
+
+// sampled sinusoid
+var graph2 = board.create('functiongraph', [function(x){
+var fs = slider2.Value();
+var fo = slider.Value();
+
+
+var inversed;
+var value = fo;
+var nyquistfre;
+var nyquistfre2;
+for (i = -10; i < 10; i++) {
+    if (Math.abs(fs*i-fo)<value && (Math.abs(fs*i-fo)!=0))
+    {
+       value = Math.abs(fs*i-fo)
+       
+       if ((fs*i-fo)<0){inversed = true}
+       if (i == 1) {nyquistfre = true}
+       if (i == 2) {nyquistfre2 = true}
+
+
+ 
+     
+    }
+}
+
+
+document.getElementById("demo").innerHTML = value ;
+var coeff = value;
+
+if (nyquistfre2 == true){return Math.cos(-coeff * x * 2 * pi +  phase.Value());}
+
+if (inversed == true){return Math.cos(-coeff * x * 2 * pi -  phase.Value());}
+
+
+
+if (nyquistfre == true){return Math.cos(coeff * x * 2 * pi -  phase.Value());}
+
+
+
+
+
+
+document.getElementById("demo").innerHTML = value ;
+var coeff = value;
+return Math.cos(coeff * x * 2 * pi + phase.Value());
+}],{strokeColor: "grey",strokeWidth:1.5});
+
+// points
+p0 = board.create('point', [0,0], {name: '',color:'grey',size:0});
+p1 = board.create('point', [function(){return 1/slider2.Value()*1;},0], {name: '',color:'grey',size:0});
+p2 = board.create('point', [function(){return 1/slider2.Value()*2;},0], {name: '',color:'grey',size:0});
+p3 = board.create('point', [function(){return 1/slider2.Value()*3;},0], {name: '',color:'grey',size:0});
+p4 = board.create('point', [function(){return 1/slider2.Value()*4;},0], {name: '',color:'grey',size:0});
+p5 = board.create('point', [function(){return 1/slider2.Value()*5;},0], {name: '',color:'grey',size:0});
+p6 = board.create('point', [function(){return 1/slider2.Value()*6;},0], {name: '',color:'grey',size:0});
+p7 = board.create('point', [function(){return 1/slider2.Value()*7;},0], {name: '',color:'grey',size:0});
+p8 = board.create('point', [function(){return 1/slider2.Value()*8;},0], {name: '',color:'grey',size:0});
+p9 = board.create('point', [function(){return 1/slider2.Value()*9;},0], {name: '',color:'grey',size:0});
+b0 = board.create('point', [function(){return 0},function(){return Math.cos(slider.Value()*0*2*pi+phase.Value());}], {name: '',color:'grey',size:1});
+b1 = board.create('point', [function(){return 1/slider2.Value()*1;},function(){return Math.cos(slider.Value()*(1/slider2.Value()*1)*2*pi+phase.Value());}], {name: '',color:'grey',size:1});
+b2 = board.create('point', [function(){return 1/slider2.Value()*2;},function(){return Math.cos(slider.Value()*(1/slider2.Value()*2)*2*pi+phase.Value());}], {name: '',color:'grey',size:1});
+b3 = board.create('point', [function(){return 1/slider2.Value()*3;},function(){return Math.cos(slider.Value()*(1/slider2.Value()*3)*2*pi+phase.Value());}], {name: '',color:'grey',size:1});
+b4 = board.create('point', [function(){return 1/slider2.Value()*4;},function(){return Math.cos(slider.Value()*(1/slider2.Value()*4)*2*pi+phase.Value());}], {name: '',color:'grey',size:1});
+b5 = board.create('point', [function(){return 1/slider2.Value()*5;},function(){return Math.cos(slider.Value()*(1/slider2.Value()*5)*2*pi+phase.Value());}], {name: '',color:'grey',size:1});
+b6 = board.create('point', [function(){return 1/slider2.Value()*6;},function(){return Math.cos(slider.Value()*(1/slider2.Value()*6)*2*pi+phase.Value());}], {name: '',color:'grey',size:1});
+b7 = board.create('point', [function(){return 1/slider2.Value()*7;},function(){return Math.cos(slider.Value()*(1/slider2.Value()*7)*2*pi+phase.Value());}], {name: '',color:'grey',size:1});
+b8 = board.create('point', [function(){return 1/slider2.Value()*8;},function(){return Math.cos(slider.Value()*(1/slider2.Value()*8)*2*pi+phase.Value());}], {name: '',color:'grey',size:1});
+b9 = board.create('point', [function(){return 1/slider2.Value()*9;},function(){return Math.cos(slider.Value()*(1/slider2.Value()*9)*2*pi+phase.Value());}], {name: '',color:'grey',size:1});
+l0 = board.create('line', [p0,b0], {straightFirst:false, straightLast:false,strokeColor:'#00ff00'});
+l1 = board.create('line', [p1,b1], {straightFirst:false, straightLast:false,strokeColor:'#00ff00'});
+l2 = board.create('line', [p2,b2], {straightFirst:false, straightLast:false,strokeColor:'#00ff00'});
+l3 = board.create('line', [p3,b3], {straightFirst:false, straightLast:false,strokeColor:'#00ff00'});
+l4 = board.create('line', [p4,b4], {straightFirst:false, straightLast:false,strokeColor:'#00ff00'});
+l5 = board.create('line', [p5,b5], {straightFirst:false, straightLast:false,strokeColor:'#00ff00'});
+l6 = board.create('line', [p6,b6], {straightFirst:false, straightLast:false,strokeColor:'#00ff00'});
+l7 = board.create('line', [p7,b7], {straightFirst:false, straightLast:false,strokeColor:'#00ff00'});
+l8 = board.create('line', [p8,b8], {straightFirst:false, straightLast:false,strokeColor:'#00ff00'});
+l9 = board.create('line', [p9,b9], {straightFirst:false, straightLast:false,strokeColor:'#00ff00'});
+
+// animation
+var animate = null;
+
+function sliderAnimation() {
+    var sdiff = sMax - sMin;
+        newval = slider.Value() + 0.1;
+    slider.position = (newval - sMin) / sdiff; // set the position of slider
+    var boundary = slider2.Value() / sMax; // set a boundary for slider
+    if (slider.position > boundary) {    // the range of slider.position is 0 to 1
+        slider.position = 0.0;
+    }
+    board.update();
+    animate = setTimeout(sliderAnimation,25);
+};
+
+function player(){
+    if (!animate) {
+        document.getElementById('playbutton').value = ' stop demo ';
+        sliderAnimation();
+    } else {
+        document.getElementById('playbutton').value = ' play demo ';
+        clearTimeout(animate);
+        animate = null;
+    }
+};
+
+function updateText() {
+    document.getElementById('updateText').value = 'update';
+    textValue = document.getElementById('fo').value;
+    slider.position = (textValue - sMin) / sMax;
+    board.update();
+}
+
+// ---------------- Board 2 : Frequency Domain ------------------------------------------//
+
+var board2 = JXG.JSXGraph.initBoard('box2', {boundingbox: [0, -3, 0.3, -6.5], axis:true, grid:true, showCopyright:false, showNavigation:false});
+board.addChild(board2);  // Two boards can be connected with the command "board.addChild()"
+
+// Time Domain
+var xaxis = board2.create('arrow',[[0,-6],[0.3,-6]],{strokecolor:"#444",
+strokeWidth:1,highlight:true,fixed:true});
+var txt1 = board2.create('text',[0.135,-6.3, 'Nyquest Frequency'], {fontSize:13});
+var txt3 = board2.create('text',[0.005,-3.3, 'Frequency Domain'], {fontSize:13});
+var txt4 = board2.create('text',[0.27,-6.2, 'Frequency(Hz)'], {fontSize:12});
+
+var Nyquest = board2.create('segment',[[0.15,-3.5],[0.15,-6]
+    ],{strokecolor:"#444",strokeWidth:1,highlight:false,fixed:true,strokeOpacity: 0.6});
+
+// sampled frequency arrow
+var f0 = board2.create('segment',[
+    [function(){return sMax / slider2.Value() * 0.3 / sMax * document.getElementById("demo").innerHTML;},-6],
+    [function(){return sMax / slider2.Value() * 0.3 / sMax * document.getElementById("demo").innerHTML;},-4]
+],{strokecolor:"grey",strokeWidth:2,highlight:false,fixed:true});
+var p0 = board2.create('point',[
+    function(){return sMax / slider2.Value() * 0.3 / sMax * document.getElementById("demo").innerHTML;},-4
+],{name:'', face:'square', size:2, color:'grey', fillOpacity:0.6, strokeOpacity: 0.6});
+
+// original frequency arrow
+var f1 = board2.create('segment',[
+    [function(){return sMax / slider2.Value() * 0.3 / sMax * slider.Value();},-6],
+    [function(){return sMax / slider2.Value() * 0.3 / sMax * slider.Value();},-4]
+],{strokecolor:"blue",strokeWidth:2,highlight:true,fixed:true});
+var p1 = board2.create('point',[
+    function(){return sMax / slider2.Value() * 0.3 / sMax * slider.Value();},-4
+],{name:'fo', face:'square', size:2, color:'blue', fillOpacity:1, strokeOpacity: 0.6});
+
+</script>
+</body>
+
