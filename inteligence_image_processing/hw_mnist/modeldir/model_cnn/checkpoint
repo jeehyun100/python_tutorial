@@ -1,6 +1,0 @@
-model_checkpoint_path: "model_cnn_0.9906-6000"
-all_model_checkpoint_paths: "model_cnn_0.9779-1000"
-all_model_checkpoint_paths: "model_cnn_0.984-2000"
-all_model_checkpoint_paths: "model_cnn_0.9869-3000"
-all_model_checkpoint_paths: "model_cnn_0.9885-4000"
-all_model_checkpoint_paths: "model_cnn_0.9906-6000"

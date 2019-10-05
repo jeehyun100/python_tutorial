@@ -1,6 +1,0 @@
-model_checkpoint_path: "model_mlp_1_0.9183-13000"
-all_model_checkpoint_paths: "model_mlp_1_0.9064-7000"
-all_model_checkpoint_paths: "model_mlp_1_0.9109-8000"
-all_model_checkpoint_paths: "model_mlp_1_0.9133-9000"
-all_model_checkpoint_paths: "model_mlp_1_0.9141-10000"
-all_model_checkpoint_paths: "model_mlp_1_0.9183-13000"

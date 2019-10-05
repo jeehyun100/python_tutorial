@@ -5,7 +5,7 @@ from PIL import Image, ImageFilter
 import os
 import numpy as np
 import matplotlib.pyplot as plt  # for plotting
-
+from sklearn.metrics import f1_score
 
 class Model(object):
 
@@ -23,45 +23,52 @@ class Model(object):
         self.output_shape = None
         self.input_shape = None
         self.input_x_shape = None
+        self.best_val_acc = 0
+        self.best_gloval_step = 0
 
         self.sess = sess
         self.conf = conf
         self.def_params()
-        self.model_dir = conf.modeldir + "/" + conf.model_name
-        self.log_dir = conf.logdir + "/" + conf.model_name
+        self.model_dir = conf.modeldir + "/" + conf.model_name +"_" + conf.active_func + "_" + conf.initial_type + "_" + str(conf.learning_rate)
+        self.log_dir = conf.logdir + "/" + conf.model_name +"_" + conf.active_func + "_" + conf.initial_type + "_" + str(conf.learning_rate)
         if not os.path.exists(self.model_dir):
             os.makedirs(self.model_dir)
         if not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir)
-        self.build(conf.model_name, conf.run_type)
+        self.model_save_name = conf.model_name +"_" + conf.active_func + "_"+ conf.initial_type
+        self.build(conf.model_name, conf.run_type, conf.active_func, conf.initial_type)
         self.train_summary = self.config_summary('train')
         self.valid_summary = self.config_summary('valid')
 
     def def_params(self):
 
         # MNIST data image of shape 28 * 28 = 784
-        if self.conf.model_name != 'model_cnn':
-            self.input_shape = [
-                None, self.conf.width * self.conf.height * self.conf.channel]
-            self.output_shape = [None, self.conf.class_num]
-            self.input_x_shape = self.conf.width * self.conf.height * self.conf.channel
-        else:
+        if 'model_cnn' in self.conf.model_name:
             self.input_shape = [
                 None, self.conf.width, self.conf.height, self.conf.channel]
             self.output_shape = [None, self.conf.class_num]
             self.input_x_shape = self.conf.width * self.conf.height * self.conf.channel
+        else:
+            self.input_shape = [
+                None, self.conf.width * self.conf.height * self.conf.channel]
+            self.output_shape = [None, self.conf.class_num]
+            self.input_x_shape = self.conf.width * self.conf.height * self.conf.channel
 
-    def build(self, model_type, run_type):
+    def build(self, model_type, run_type, active_func, initial_type):
         self.X = tf.placeholder(
             tf.float32, self.input_shape, name='inputs')
         self.Y = tf.placeholder(
             tf.float32, self.output_shape, name='labels')
-        if model_type == "model_mlp_1":
-            self.cal_hypothesis()
-        elif model_type == "model_mlp_2":
-            self.cal_hypothesis_mlp2()
-        elif model_type == "model_cnn":
-            self.cal_hypothesis_cnn()
+
+        if "model_mlp_1" in model_type:
+            self.cal_hypothesis(active_func, initial_type)
+        elif "model_mlp_3" in model_type:
+            self.cal_hypothesis_mlp3(active_func, initial_type)
+        elif  "model_cnn_1" in model_type :
+            #self.cal_hypothesis_cnn()
+            self.cal_hypothesis_cnn_1(active_func, initial_type)
+        elif  "model_cnn_3" in model_type :
+            self.cal_hypothesis_cnn_3(active_func, initial_type)
         self.set_cost()
         self.set_optimizer()
         self.sess.run(tf.global_variables_initializer())
@@ -88,28 +95,61 @@ class Model(object):
             self.optimizer = tf.train.AdamOptimizer(learning_rate=self.conf.learning_rate).minimize(
                 self.cost, name='train_op')
 
-    def cal_hypothesis(self):
-        W = tf.Variable(tf.random_normal([self.input_x_shape, self.conf.class_num]))
-        b = tf.Variable(tf.random_normal([self.conf.class_num]))
-        self.output_layer = tf.matmul(self.X, W) + b
+    def cal_hypothesis(self, active_func='sigmoid', initial_type='random'):
+        if initial_type == 'random':
+            W = tf.Variable(tf.random_normal([self.input_x_shape, self.conf.class_num]))
+            b = tf.Variable(tf.random_normal([self.conf.class_num]))
+        elif initial_type == 'xavier':
+            initializer = tf.initializers.GlorotUniform()
+
+            W = tf.Variable(initializer([self.input_x_shape, self.conf.class_num]))
+            b = tf.Variable(
+                initializer([self.conf.class_num]))
+
+        if active_func == 'sigmoid':
+            self.output_layer = tf.nn.sigmoid(tf.matmul(self.X, W) + b)
+        elif active_func == 'relu':
+            self.output_layer = tf.nn.relu(tf.matmul(self.X, W) + b)
         self.hypothesis = tf.nn.softmax(self.output_layer)
 
-    def cal_hypothesis_mlp2(self):
+    def cal_hypothesis_mlp3(self, active_func='sigmoid', initial_type='random'):
         hidden_layers = self.conf.mlp_hidden.split(',')
+        if initial_type == 'random':
+            h1 = tf.Variable(tf.random_normal([self.input_x_shape, int(hidden_layers[0])]))
+            b1 = tf.Variable(tf.random_normal([int(hidden_layers[0])]))
 
-        h1 = tf.Variable(tf.random_normal([self.input_x_shape, int(hidden_layers[0])]))
-        b1 = tf.Variable(tf.random_normal([int(hidden_layers[0])]))
+            h2 = tf.Variable(tf.random_normal([int(hidden_layers[0]), int(hidden_layers[1])]))
+            b2 = tf.Variable(tf.random_normal([int(hidden_layers[1])]))
 
-        h2 = tf.Variable(tf.random_normal([int(hidden_layers[0]), int(hidden_layers[1])]))
-        b2 = tf.Variable(tf.random_normal([int(hidden_layers[1])]))
+            h3 = tf.Variable(tf.random_normal([int(hidden_layers[1]), int(hidden_layers[2])]))
+            b3 = tf.Variable(tf.random_normal([int(hidden_layers[2])]))
 
-        W = tf.Variable(tf.random_normal([int(hidden_layers[1]), self.conf.class_num]))
-        b = tf.Variable(tf.random_normal([self.conf.class_num]))
+            W = tf.Variable(tf.random_normal([int(hidden_layers[2]), self.conf.class_num]))
+            b = tf.Variable(tf.random_normal([self.conf.class_num]))
+        elif initial_type == 'xavier':
+            initializer = tf.initializers.GlorotUniform()
+            h1 = tf.Variable(initializer([self.input_x_shape, int(hidden_layers[0])]))
+            b1 = tf.Variable(initializer([int(hidden_layers[0])]))
 
-        layer_1 = tf.matmul(self.X, h1) + b1
-        layer_2 = tf.matmul(layer_1, h2) + b2
+            h2 = tf.Variable(initializer([int(hidden_layers[0]), int(hidden_layers[1])]))
+            b2 = tf.Variable(initializer([int(hidden_layers[1])]))
 
-        self.output_layer = tf.matmul(layer_2, W) + b
+            h3 = tf.Variable(initializer([int(hidden_layers[1]), int(hidden_layers[2])]))
+            b3 = tf.Variable(initializer([int(hidden_layers[2])]))
+
+            W = tf.Variable(initializer([int(hidden_layers[2]), self.conf.class_num]))
+            b = tf.Variable(initializer([self.conf.class_num]))
+
+        if active_func == 'sigmoid':
+            layer_1 = tf.nn.sigmoid(tf.matmul(self.X, h1) + b1)
+            layer_2 = tf.nn.sigmoid(tf.matmul(layer_1, h2) + b2)
+            layer_3 = tf.nn.sigmoid(tf.matmul(layer_2, h3) + b3)
+        elif active_func == 'relu':
+            layer_1 = tf.nn.relu(tf.matmul(self.X, h1) + b1)
+            layer_2 = tf.nn.relu(tf.matmul(layer_1, h2) + b2)
+            layer_3 = tf.nn.relu(tf.matmul(layer_2, h3) + b3)
+
+        self.output_layer = tf.matmul(layer_3, W) + b
         self.hypothesis = tf.nn.softmax(self.output_layer)
 
     def cal_hypothesis_cnn(self):
@@ -152,6 +192,129 @@ class Model(object):
         self.output_layer = tf.matmul(fc1, h5) + b5
         self.hypothesis = tf.nn.softmax(self.output_layer)
 
+    def cal_hypothesis_cnn_3(self, active_func ='sigmoid', initial_type='random'):
+        cnn_filter = self.conf.cnn_filter.split(',')
+        hidden_layers = self.conf.mlp_hidden.split(',')
+
+        if initial_type == 'random':
+            # 5x5 conv. window, 1 input channel (gray images), C1 - outputs
+            h1 = tf.Variable(tf.random_normal([5, 5, 1, int(cnn_filter[0])]))
+            b1 = tf.Variable(tf.random_normal([int(cnn_filter[0])]))
+            # 3x3 conv. window, C1 input channels(output from previous conv. layer ), C2 - outputs
+            h2 = tf.Variable(tf.random_normal([3, 3, int(cnn_filter[0]), int(cnn_filter[1])]))
+            b2 = tf.Variable(tf.random_normal([int(cnn_filter[1])]))
+            # 3x3 conv. window, C2 input channels(output from previous conv. layer ), C3 - outputs
+            h3 = tf.Variable(tf.random_normal([3, 3, int(cnn_filter[1]), int(cnn_filter[2])]))
+            b3 = tf.Variable(tf.random_normal([int(cnn_filter[2])]))
+            # fully connected layer, we have to reshpe previous output to one dim,
+            # we have two max pool operation in our network design, so our initial size 28x28 will be reduced 2*2=4
+            # each max poll will reduce size by factor of 2
+            h4 = tf.Variable(tf.random_normal([7 * 7 * int(cnn_filter[2]), int(hidden_layers[-1])]))
+            b4 = tf.Variable(tf.random_normal([int(hidden_layers[-1])]))
+            # output softmax layer (10 digits)
+            h5 = tf.Variable(tf.random_normal([int(hidden_layers[-1]), 10]))
+            b5 = tf.Variable(tf.random_normal([10]))
+        elif initial_type == 'xavier':
+
+            # 5x5 conv. window, 1 input channel (gray images), C1 - outputs
+            h1 = tf.get_variable("h1", shape = [5, 5, 1, int(cnn_filter[0])],initializer=tf.contrib.layers.xavier_initializer())
+            b1 = tf.get_variable("b1", shape = [int(cnn_filter[0])],initializer=tf.contrib.layers.xavier_initializer())
+            # 3x3 conv. window, C1 input channels(output from previous conv. layer ), C2 - outputs
+            h2 = tf.get_variable("h2", shape = [3, 3, int(cnn_filter[0]), int(cnn_filter[1])],initializer=tf.contrib.layers.xavier_initializer())
+            b2 = tf.get_variable("b2", shape = [int(cnn_filter[1])],initializer=tf.contrib.layers.xavier_initializer())
+            # 3x3 conv. window, C2 input channels(output from previous conv. layer ), C3 - outputs
+            h3 = tf.get_variable("h3", shape = [3, 3, int(cnn_filter[1]), int(cnn_filter[2])],initializer=tf.contrib.layers.xavier_initializer())
+            b3 = tf.get_variable("b3", shape = [int(cnn_filter[2])],initializer=tf.contrib.layers.xavier_initializer())
+            # fully connected layer, we have to reshpe previous output to one dim,
+            # we have two max pool operation in our network design, so our initial size 28x28 will be reduced 2*2=4
+            # each max poll will reduce size by factor of 2
+            h4 = tf.get_variable("h4", shape = [7 * 7 * int(cnn_filter[2]), int(hidden_layers[-1])],initializer=tf.contrib.layers.xavier_initializer())
+            b4 = tf.get_variable("b4", shape = [int(hidden_layers[-1])],initializer=tf.contrib.layers.xavier_initializer())
+            # output softmax layer (10 digits)
+            h5 = tf.get_variable("h5", shape = [int(hidden_layers[-1]), 10],initializer=tf.contrib.layers.xavier_initializer())
+            b5 = tf.get_variable("b5", shape = [10],initializer=tf.contrib.layers.xavier_initializer())
+
+        if active_func == 'sigmoid':
+            stride = 1  # output is 28x28
+            layer_1 = tf.nn.sigmoid(tf.nn.conv2d(self.X, h1, strides=[1, stride, stride, 1], padding='SAME') + b1)
+
+            k = 2  # max pool filter size and stride, will reduce input by factor of 2
+            layer_2 = tf.nn.sigmoid(tf.nn.conv2d(layer_1, h2, strides=[1, stride, stride, 1], padding='SAME') + b2)
+            layer_2 = tf.nn.max_pool(layer_2, ksize=[1, k, k, 1], strides=[1, k, k, 1], padding='SAME')
+
+            layer_3 = tf.nn.sigmoid(tf.nn.conv2d(layer_2, h3, strides=[1, stride, stride, 1], padding='SAME') + b3)
+            layer_3 = tf.nn.max_pool(layer_3, ksize=[1, k, k, 1], strides=[1, k, k, 1], padding='SAME')
+
+            # reshape the output from the third convolution for the fully connected layer
+            flat = tf.reshape(layer_3, shape=[-1, 7 * 7 * int(cnn_filter[2])])
+            fc1 = tf.nn.sigmoid(tf.matmul(flat, h4) + b4)
+        elif active_func == 'relu':
+            stride = 1  # output is 28x28
+            layer_1 = tf.nn.relu(tf.nn.conv2d(self.X, h1, strides=[1, stride, stride, 1], padding='SAME') + b1)
+
+            k = 2  # max pool filter size and stride, will reduce input by factor of 2
+            layer_2 = tf.nn.relu(tf.nn.conv2d(layer_1, h2, strides=[1, stride, stride, 1], padding='SAME') + b2)
+            layer_2 = tf.nn.max_pool(layer_2, ksize=[1, k, k, 1], strides=[1, k, k, 1], padding='SAME')
+
+            layer_3 = tf.nn.relu(tf.nn.conv2d(layer_2, h3, strides=[1, stride, stride, 1], padding='SAME') + b3)
+            layer_3 = tf.nn.max_pool(layer_3, ksize=[1, k, k, 1], strides=[1, k, k, 1], padding='SAME')
+
+            # reshape the output from the third convolution for the fully connected layer
+            flat = tf.reshape(layer_3, shape=[-1, 7 * 7 * int(cnn_filter[2])])
+            fc1 = tf.matmul(flat, h4) + b4
+
+
+        self.output_layer = tf.matmul(fc1, h5) + b5
+        self.hypothesis = tf.nn.softmax(self.output_layer)
+
+    def cal_hypothesis_cnn_1(self, active_func='sigmoid', initial_type='random'):
+        cnn_filter = self.conf.cnn_filter.split(',')
+        hidden_layers = self.conf.mlp_hidden.split(',')
+
+        if initial_type == 'random':
+            # 5x5 conv. window, 1 input channel (gray images), C1 - outputs
+            h1 = tf.Variable(tf.random_normal([5, 5, 1, int(cnn_filter[0])]))
+            b1 = tf.Variable(tf.random_normal([int(cnn_filter[0])]))
+            # fully connected layer, we have to reshpe previous output to one dim,
+            # we have two max pool operation in our network design, so our initial size 28x28 will be reduced 2*2=4
+            # each max poll will reduce size by factor of 2
+            h4 = tf.Variable(tf.random_normal([14 * 14 * int(cnn_filter[0]), int(hidden_layers[-1])]))
+            b4 = tf.Variable(tf.random_normal([int(hidden_layers[-1])]))
+            # output softmax layer (10 digits)
+            h5 = tf.Variable(tf.random_normal([int(hidden_layers[-1]), 10]))
+            b5 = tf.Variable(tf.random_normal([10]))
+        elif initial_type == 'xavier':
+            initializer = tf.initializers.GlorotUniform()
+            # 5x5 conv. window, 1 input channel (gray images), C1 - outputs
+            h1 = tf.Variable(initializer([5, 5, 1, int(cnn_filter[0])]))
+            b1 = tf.Variable(initializer([int(cnn_filter[0])]))
+            # fully connected layer, we have to reshpe previous output to one dim,
+            # we have two max pool operation in our network design, so our initial size 28x28 will be reduced 2*2=4
+            # each max poll will reduce size by factor of 2
+            h4 = tf.Variable(initializer([7 * 7 * int(cnn_filter[0]), int(hidden_layers[-1])]))
+            b4 = tf.Variable(initializer([int(hidden_layers[-1])]))
+            # output softmax layer (10 digits)
+            h5 = tf.Variable(initializer([int(hidden_layers[-1]), 10]))
+            b5 = tf.Variable(initializer([10]))
+
+        if active_func == 'sigmoid':
+            stride = 1  # output is 28x28
+            k = 2
+            layer_1 = tf.nn.sigmoid(tf.nn.conv2d(self.X, h1, strides=[1, stride, stride, 1], padding='SAME') + b1)
+            layer_1 = tf.nn.max_pool(layer_1, ksize=[1, k, k, 1], strides=[1, k, k, 1], padding='SAME')
+
+        elif active_func == 'relu':
+            stride = 1  # output is 28x28
+            layer_1 = tf.nn.relu(tf.nn.conv2d(self.X, h1, strides=[1, stride, stride, 1], padding='SAME') + b1)
+
+        # reshape the output from the third convolution for the fully connected layer
+        flat = tf.reshape(layer_1, shape=[-1, 14 * 14 * int(cnn_filter[0])])
+        fc1 = tf.nn.sigmoid(tf.matmul(flat, h4) + b4)
+
+        self.output_layer = tf.matmul(fc1, h5) + b5
+        self.hypothesis = tf.nn.softmax(self.output_layer)
+
+
     def config_summary(self, name):
         summarys = list()
         summarys.append(tf.summary.scalar(name+'/loss', self.cost))
@@ -178,7 +341,8 @@ class Model(object):
             every summary_interval save tensorboard info
 
         """
-        best_val_acc = 0
+        self.best_val_acc = 0
+        self.best_gloval_step = 0
         val_acc = 0
         #global_step = 0
         for epoch in range(self.conf.training_epochs):
@@ -190,7 +354,7 @@ class Model(object):
             for epoch_num in range(total_batch):
                 global_step = (total_batch * (epoch + 1)) + epoch_num
                 # save tensorboard summary every test_interval numbers.
-                if global_step % self.conf.test_interval == 0:
+                if global_step % self.conf.test_interval == 0 or epoch_num == (len(range(total_batch))-1):
                     _, summary = self.sess.run([self.cost, self.valid_summary],
                                                feed_dict={self.X: self.dataset.test.images,
                                                           self.Y: self.dataset.test.labels})
@@ -198,7 +362,7 @@ class Model(object):
                     val_acc = self.accuracy_op.eval(session=self.sess,
                                                     feed_dict={self.X: self.dataset.test.images,
                                                                self.Y: self.dataset.test.labels})
-                    print("# Validation [{2}/{1}]   --> Accuracy: {0:0.5f}".format(val_acc, epoch_num, epoch+1))
+                    print("# Validation [{2}/{1}]   --> Accuracy: {0:0.5f}".format(val_acc, global_step, epoch+1))
                 if global_step % self.conf.summary_interval == 0:
                     batch_xs, batch_ys = self.dataset.train.next_batch(self.conf.batch)
                     # Run training (1 batch)
@@ -209,7 +373,7 @@ class Model(object):
                                                       self.Y: batch_ys})
 
                     print("# Training   [{4}/{3}]   --> Accuracy: {0:0.5f}    Currenct Batch Loss:"
-                          " {1:0.5f} / Avg Loss {2:0.5f}".format(train_acc, c, avg_cost, epoch_num, epoch+1))
+                          " {1:0.5f} / Avg Loss {2:0.5f}".format(train_acc, c, avg_cost, global_step, epoch+1))
                 else:
                     batch_xs, batch_ys = self.dataset.train.next_batch(self.conf.batch)
                     # Run training (1 batch)
@@ -217,11 +381,30 @@ class Model(object):
                     # avg_cost of this epoch
                     avg_cost += c / total_batch
 
-                if best_val_acc < val_acc:
+                if self.best_val_acc < val_acc:
                     print("# Save Model [{2}/{0}]   --> Best Accuracy Accuracy: {1:0.5f}".format(
-                        epoch_num, val_acc, epoch+1))
+                        global_step, val_acc, epoch+1))
                     self.save(global_step, val_acc)
-                    best_val_acc = val_acc
+                    self.best_val_acc = val_acc
+                    self.best_gloval_step = global_step
+        return self.best_gloval_step, self.best_val_acc
+
+    def evaluation(self):
+        """
+        This function evaluation from a test data.
+        """
+        pred_y = self.sess.run([self.hypothesis, ], feed_dict={
+            self.X: self.dataset.test.images})
+
+        f1s = f1_score(np.argmax(pred_y[0], axis=1),  np.argmax(self.dataset.test.labels, axis=1), average='weighted')
+        self.dataset.test.labels
+
+        val_acc = self.accuracy_op.eval(session=self.sess,
+                                        feed_dict={self.X: self.dataset.test.images,
+                                                   self.Y: self.dataset.test.labels})
+        print("# Validation   --> Accuracy: {0:0.5f} F1 Score : {1}".format(val_acc, f1s))
+
+
 
     def predict(self, predict_value):
         """
@@ -236,14 +419,14 @@ class Model(object):
         This function saves the model.
         """
         checkpoint_path = os.path.join(
-            self.model_dir, self.conf.model_name+"_"+str(acc))
+            self.model_dir, self.model_save_name + "_"+str(acc))
         self.saver.save(self.sess, checkpoint_path, global_step=step)
 
     def reload(self, step, acc):
         """
         This function loads the model.
         """
-        model_name = self.conf.model_name + "_"+str(acc)
+        model_name = self.model_save_name + "_"+str(acc)
         checkpoint_path = os.path.join(
             self.model_dir, model_name)
         model_path = checkpoint_path+'-'+str(step)
@@ -286,7 +469,7 @@ def imageprepare(argv, type_cnn):
 
     # normalize pixels to 0 and 1. 0 is pure white, 1 is pure black.
     tva = [(255 - x) * 1.0 / 255.0 for x in tv]
-    if type_cnn == "model_cnn":
+    if "model_cnn" in type_cnn:
         tva = np.reshape(tva, (28, 28, 1))
     return tva
 
@@ -297,7 +480,8 @@ def configure():
     flags.DEFINE_integer('training_epochs', 25, '# of step for training')
     flags.DEFINE_integer('test_interval', 1000, '# of interval to test a model')
     flags.DEFINE_integer('summary_interval', 100, '# of step to save summary')
-    flags.DEFINE_float('learning_rate', 0.003, 'learning rate')
+    flags.DEFINE_float('learning_rate', 0.1, 'learning rate')
+    flags.DEFINE_float('gpu', 1, 'gpu use :1, cpu :0')
     # data
     flags.DEFINE_integer('batch', 100, 'batch size')
     flags.DEFINE_integer('height', 28, 'height size')
@@ -308,11 +492,14 @@ def configure():
     flags.DEFINE_string('modeldir', './modeldir', 'Model dir')
     # network architecture
     flags.DEFINE_integer('class_num', 10, 'output class number')
-    flags.DEFINE_string('mlp_hidden', '256,256', 'hidden_layer_number')
+    flags.DEFINE_string('mlp_hidden', '256,256,100,100', 'hidden_layer_number')
     flags.DEFINE_string('cnn_filter', '4,8,16', 'hidden_layer_number')
-    flags.DEFINE_string('model_name', 'model_mlp_1', 'Choose one [model_mlp_1, model_mlp_2, model_cnn]')
+    flags.DEFINE_string('model_name', 'model_mlp_3', 'Choose one [model_mlp_1, model_mlp_3, model_cnn_1, model_cnn_3]')
+    flags.DEFINE_string('active_func', 'sigmoid', 'Choose one [sigmoid, relu]')
+    flags.DEFINE_string('initial_type', 'random', 'Choose one [random, xavier]')
+
     # Run_Type
-    flags.DEFINE_integer('run_type', 2, '1 : train, 2 : predict')
+    flags.DEFINE_integer('run_type', 1, '1 : train, 2 : predict')
     # fix bug of flags
     flags.FLAGS.__dict__['__parsed'] = False
     return flags.FLAGS
@@ -322,35 +509,66 @@ def main(_):
 
     # args = parser.parse_args()
     conf = configure()
+    tfconfig = tf.ConfigProto()
+    if conf.gpu == 1:
+        os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+        tfconfig.gpu_options.per_process_gpu_memory_fraction = 0.3
+    else:
+        os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
 
     if conf.run_type == 1:
-        model = Model(tf.Session(), conf)
+        model = Model(tf.Session(config=tfconfig), conf)
         mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
-        if conf.model_name == 'model_cnn':
+        if 'model_cnn' in conf.model_name:
             mnist = input_data.read_data_sets("MNIST_data/", one_hot=True, reshape=False)
         model.set_dataset(mnist)
-        model.train()
+        best_gloval_step, best_val_acc = model.train()
+        tf.reset_default_graph()
+        model.reload(best_gloval_step, best_val_acc)
+        model.evaluation()
+
     elif conf.run_type == 2:
-        with tf.Session() as sess:
+        with tf.Session(config=tfconfig) as sess:
+
             conf.model_name = "model_mlp_1"
+            conf.active_func = "sigmoid"
+            conf.initial_type = "random"
+            conf.learning_rate = "0.01"
             model = Model(sess, conf)
             predict_value = imageprepare("./test_9.png", conf.model_name)
-            model.reload(13000, 0.9183)
+            model.reload(8799, 0.9209)
             print("MLP_1 Label : 9      predict {0}".format(model.predict(predict_value)))
+        tf.reset_default_graph()
+        with tf.Session(config=tfconfig) as sess:
+            conf.model_name = "model_mlp_3"
+            conf.active_func = "sigmoid"
+            conf.initial_type = "random"
+            conf.learning_rate = "0.1"
+            model = Model(sess, conf)
+            predict_value = imageprepare("./test_9.png", conf.model_name)
+            model.reload(10449, 0.9653)
+            print("MLP_3 Label : 9      predict {0}".format(model.predict(predict_value)))
 
         tf.reset_default_graph()
-        with tf.Session() as sess:
-            conf.model_name = "model_mlp_2"
+        with tf.Session(config=tfconfig) as sess:
+            conf.model_name = "model_mlp_3"
+            conf.active_func = "sigmoid"
+            conf.initial_type = "random"
+            conf.learning_rate = "0.01"
             model = Model(sess, conf)
             predict_value = imageprepare("./test_9.png", conf.model_name)
-            model.reload(5000, 0.8915)
-            print("MLP_2 Label : 9      predict {0}".format(model.predict(predict_value)))
+            model.reload(10449, 0.9653)
+            print("MLP_3 Label : 9      predict {0}".format(model.predict(predict_value)))
         tf.reset_default_graph()
-        with tf.Session() as sess:
-            conf.model_name = "model_cnn"
+        with tf.Session(config=tfconfig) as sess:
+            conf.model_name = "model_cnn_3"
+            conf.active_func = "relu"
+            conf.initial_type = "xavier"
+            conf.learning_rate = "0.001"
             model = Model(sess, conf)
             predict_value = imageprepare("./test_9.png", conf.model_name)
-            model.reload(6000, 0.9906)
+            model.reload(14000, 0.9885)
             print("MLP_CNN Label : 9      predict {0}".format(model.predict(predict_value)))
         plt.imshow(np.reshape(predict_value,(28,28)), cmap=plt.get_cmap('gray'), vmin=0, vmax=1)
         plt.show()
@@ -359,7 +577,4 @@ def main(_):
 
 
 if __name__ == '__main__':
-    # configure which gpu or cpu to use
-    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-    # os.environ['CUDA_VISIBLE_DEVICES'] = ''
     tf.app.run()
