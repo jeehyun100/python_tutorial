@@ -6,22 +6,27 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt  # for plotting
 from sklearn.metrics import f1_score
+import matplotlib.gridspec as gridspec
 
 class Model(object):
 
     def __init__(self, sess, conf):
         self.output_layer = None
         self.hypothesis = None
+        self.generative_hypothesis = None
         self.dataset = None
         self.accuracy_op = None
         self.X = None
         self.Y = None
+        self.G = None
         self.saver = None
         self.writer = None
         self.cost = None
         self.optimizer = None
         self.output_shape = None
         self.input_shape = None
+        self.input_latent_shape = None
+        self.latent_shape = None
         self.input_x_shape = None
         self.best_val_acc = 0
         self.best_gloval_step = 0
@@ -31,10 +36,15 @@ class Model(object):
         self.def_params()
         self.model_dir = conf.modeldir + "/" + conf.model_name +"_" + conf.active_func + "_" + conf.initial_type + "_" + str(conf.learning_rate)
         self.log_dir = conf.logdir + "/" + conf.model_name +"_" + conf.active_func + "_" + conf.initial_type + "_" + str(conf.learning_rate)
+        self.gendir = conf.gendir + "/" + conf.model_name
         if not os.path.exists(self.model_dir):
             os.makedirs(self.model_dir)
         if not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir)
+        if not os.path.exists(self.gendir):
+            os.makedirs(self.gendir)
+
+
         self.model_save_name = conf.model_name +"_" + conf.active_func + "_"+ conf.initial_type
         self.build(conf.model_name, conf.run_type, conf.active_func, conf.initial_type)
         self.train_summary = self.config_summary('train')
@@ -48,17 +58,22 @@ class Model(object):
                 None, self.conf.width, self.conf.height, self.conf.channel]
             self.output_shape = [None, self.conf.class_num]
             self.input_x_shape = self.conf.width * self.conf.height * self.conf.channel
-        else:
-            self.input_shape = [
-                None, self.conf.width * self.conf.height * self.conf.channel]
+        # else:
+        #     self.input_shape = [
+        #         None, self.conf.width * self.conf.height * self.conf.channel]
+        #     self.output_shape = [None, self.conf.class_num]
+        #     self.input_x_shape = self.conf.width * self.conf.height * self.conf.channel
+        if 'model_GAN' in self.conf.model_name:
             self.output_shape = [None, self.conf.class_num]
             self.input_x_shape = self.conf.width * self.conf.height * self.conf.channel
+            self.input_latent_shape = self.conf.num_latent_variable
+            self.latent_shape = [None, self.conf.num_latent_variable]
 
     def build(self, model_type, run_type, active_func, initial_type):
         self.X = tf.placeholder(
             tf.float32, self.input_shape, name='inputs')
-        self.Y = tf.placeholder(
-            tf.float32, self.output_shape, name='labels')
+        # self.Y = tf.placeholder(
+        #     tf.float32, self.output_shape, name='labels')
 
         if "model_mlp_1" in model_type:
             self.cal_hypothesis(active_func, initial_type)
@@ -69,14 +84,134 @@ class Model(object):
             self.cal_hypothesis_cnn_1(active_func, initial_type)
         elif  "model_cnn_3" in model_type :
             self.cal_hypothesis_cnn_3(active_func, initial_type)
-        self.set_cost()
-        self.set_optimizer()
+        elif "model_GAN" in model_type :
+            self.Z = tf.placeholder(
+                tf.float32, self.latent_shape, name='input')
+            weight_list = self.cal_hypothesis_D()
+            self.G = self.cal_hypothesis_G(active_func, initial_type)
+
+
+
+            d_real, d_real_logits = self.build_discriminator(self.X, weight_list)  # D(x)
+            d_fake, d_fake_logits = self.build_discriminator(self.G, weight_list)  # D(G(z))
+
+
+            # #D = self.cal_hypothesis_D(active_func, initial_type)
+            # d_real, d_real_logits = self.cal_hypothesis_D(self.X, active_func, initial_type)  # D(x)
+            # d_fake, d_fake_logits = self.cal_hypothesis_D(self.G, active_func, initial_type)  # D(G(z))
+
+            self.set_gan_cost(d_real_logits, d_fake_logits)
+            self.set_gan_optimizer()
+
+        if "model_GAN" not in model_type:
+            self.set_cost()
+            self.set_optimizer()
+
         self.sess.run(tf.global_variables_initializer())
         self.saver = tf.train.Saver()
         if run_type == 2:
             self.writer = None
         else:
             self.writer = tf.summary.FileWriter(self.log_dir, self.sess.graph)
+
+    def cal_hypothesis_G(self, active_func='sigmoid', initial_type='random'):
+        """
+         This function build gernerative  model.
+         """
+        with tf.variable_scope('generator'):
+            hidden_layers = self.conf.GAN_hidden.split(',')
+            if initial_type == 'random':
+                h1 = tf.Variable(tf.random_normal([self.input_latent_shape, int(hidden_layers[0])], stddev=5e-2))
+                #tf.Variable(tf.constant(0.1, shape=[num_hidden]))
+                b1 = tf.Variable(tf.constant(0.1, shape = [int(hidden_layers[0])]))
+                #
+                # h2 = tf.Variable(tf.random_normal([int(hidden_layers[2]), int(hidden_layers[1])], stddev=5e-2))
+                # b2 = tf.Variable(tf.random_normal([int(hidden_layers[1])]))
+                #
+                h3 = tf.Variable(tf.random_normal([int(hidden_layers[0]), self.input_x_shape], stddev=5e-2))
+                b3 = tf.Variable(tf.constant(0.1, shape = [self.input_x_shape]))
+
+            elif initial_type == 'xavier':
+                h1 = tf.get_variable("h1", shape=[self.input_latent_shape, int(hidden_layers[0])],
+                                     initializer=tf.contrib.layers.xavier_initializer())
+                b1 = tf.get_variable("b1", shape=[int(hidden_layers[0])],
+                                     initializer=tf.contrib.layers.xavier_initializer())
+                #
+                # h2 = tf.get_variable("h2", shape=[int(hidden_layers[2]), int(hidden_layers[1])],
+                #                      initializer=tf.contrib.layers.xavier_initializer())
+                # b2 = tf.get_variable("b2", shape=[int(hidden_layers[1])],
+                #                      initializer=tf.contrib.layers.xavier_initializer())
+                #
+                h3 = tf.get_variable("h3", shape=[int(hidden_layers[0]), self.input_x_shape],
+                                     initializer=tf.contrib.layers.xavier_initializer())
+                b3 = tf.get_variable("b3", shape=[self.input_x_shape],
+                                     initializer=tf.contrib.layers.xavier_initializer())
+
+            if active_func == 'sigmoid':
+                layer_1 = tf.nn.sigmoid(tf.matmul(self.Z, h1) + b1)
+                #layer_2 = tf.nn.sigmoid(tf.matmul(layer_1, h2) + b2)
+
+            elif active_func == 'relu':
+                layer_1 = tf.nn.relu(tf.matmul(self.Z, h1) + b1)
+                #layer_2 = tf.nn.relu(tf.matmul(layer_1, h2) + b2)
+
+            self.output_layer = tf.matmul(layer_1, h3) + b3
+            _generative_hypothesis = tf.nn.sigmoid(self.output_layer)  # generated_mnist_image
+        return _generative_hypothesis
+
+
+    def cal_hypothesis_D(self , active_func='sigmoid', initial_type='random'):
+        """
+        This function build Descriminative model.
+        """
+        with tf.variable_scope('discriminator'):
+            hidden_layers = self.conf.GAN_hidden.split(',')
+            weight_list = list()
+            if initial_type == 'random':
+                dh1 = tf.Variable(tf.random_normal([self.input_x_shape, int(hidden_layers[0])], stddev=5e-2))
+                db1 = tf.Variable(tf.constant(0.1, shape = [int(hidden_layers[0])]))
+
+                dh2 = tf.Variable(tf.random_normal([int(hidden_layers[0]), 1], stddev=5e-2))
+                db2 = tf.Variable(tf.constant(0.1, shape = [1]))
+
+            elif initial_type == 'xavier':
+                dh1 = tf.get_variable("h1", shape=[self.input_x_shape, int(hidden_layers[0])],
+                                     initializer=tf.contrib.layers.xavier_initializer())
+                db1 = tf.get_variable("b1", shape=[int(hidden_layers[0])],
+                                     initializer=tf.contrib.layers.xavier_initializer())
+
+
+                dh2 = tf.get_variable("h3", shape=[int(hidden_layers[0]), 1],
+                                     initializer=tf.contrib.layers.xavier_initializer())
+                db2 = tf.get_variable("b3", shape=[1],
+                                     initializer=tf.contrib.layers.xavier_initializer())
+        weight_list.append(dh1)
+        weight_list.append(db1)
+        weight_list.append(dh2)
+        weight_list.append(db2)
+        return weight_list
+
+
+    def build_discriminator(self, _X, weight_list):
+        hidden_layer = tf.nn.relu((tf.matmul(_X, weight_list[0]) + weight_list[1]))
+        logits = tf.matmul(hidden_layer, weight_list[2]) + weight_list[3]  # hy[er]
+        predicted_value = tf.nn.sigmoid(logits)
+
+        return predicted_value, logits
+
+
+    def set_gan_cost(self, D_real_logits, D_fake_logits):
+
+        # Discriminator의 손실 함수를 정의합니다.
+        d_loss_real = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=D_real_logits, labels=tf.ones_like(
+            D_real_logits)))  # log(D(x))
+        d_loss_fake = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=D_fake_logits, labels=tf.zeros_like(
+            D_fake_logits)))  # log(1-D(G(z)))
+        self.d_loss = d_loss_real + d_loss_fake  # log(D(x)) + log(1-D(G(z)))
+
+        # Generator의 손실 함수를 정의합니다.
+        self.g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=D_fake_logits, labels=tf.ones_like(
+            D_fake_logits)))  # log(D(G(z))
 
     def set_cost(self):
         with tf.variable_scope('loss/loss_op'):
@@ -94,6 +229,17 @@ class Model(object):
         else:
             self.optimizer = tf.train.AdamOptimizer(learning_rate=self.conf.learning_rate).minimize(
                 self.cost, name='train_op')
+
+    def set_gan_optimizer(self):
+        #
+        tvar = tf.trainable_variables()
+        dvar = [var for var in tvar if 'discriminator' in var.name]
+        gvar = [var for var in tvar if 'generator' in var.name]
+
+        # Discriminator와 Generator의 Optimizer를 정의합니다.
+        self.d_train_step = tf.train.AdamOptimizer(self.conf.learning_rate).minimize(self.d_loss, var_list=dvar)
+        self.g_train_step = tf.train.AdamOptimizer(self.conf.learning_rate).minimize(self.g_loss, var_list=gvar)
+
 
     def cal_hypothesis(self, active_func='sigmoid', initial_type='random'):
         if initial_type == 'random':
@@ -317,9 +463,14 @@ class Model(object):
 
     def config_summary(self, name):
         summarys = list()
-        summarys.append(tf.summary.scalar(name+'/loss', self.cost))
-        summarys.append(tf.summary.scalar(name+'/accuracy', self.accuracy_op))
-        summary = tf.summary.merge(summarys)
+        if "model_GAN" in self.conf.model_name:
+            summarys.append(tf.summary.scalar(name + '/gloss', self.g_loss))
+            summarys.append(tf.summary.scalar(name + '/dloss', self.d_loss))
+            summary = tf.summary.merge(summarys)
+        else:
+            summarys.append(tf.summary.scalar(name+'/loss', self.cost))
+            summarys.append(tf.summary.scalar(name+'/accuracy', self.accuracy_op))
+            summary = tf.summary.merge(summarys)
         return summary
 
     def set_dataset(self, dataset):
@@ -389,6 +540,57 @@ class Model(object):
                     self.best_gloval_step = global_step
         return self.best_gloval_step, self.best_val_acc
 
+    def gan_train(self):
+        """
+        This function train the models
+            every test_interval validate from test data.
+            every summary_interval save tensorboard info
+
+        """
+        self.best_loss = 0
+        self.best_gloval_step = 0
+        val_acc = 0
+        # global_step = 0
+        for epoch in range(self.conf.training_epochs):
+            # for accumulation
+            avg_cost: int = 0
+            # If sample_size=60000 and batch_size=100, then total batch count is 600
+            total_batch = int(self.dataset.train.num_examples / self.conf.batch)
+            # Per each batch
+            for epoch_num in range(total_batch):
+                global_step = (total_batch * (epoch + 1)) + epoch_num
+                # save tensorboard summary every test_interval numbers.
+                # 500번 반복할때마다 생성된 이미지를 저장합니다.
+                if global_step % 500 == 0:
+                    samples = self.sess.run(self.G, feed_dict={self.Z: np.random.uniform(-1., 1., [64, 100])})
+                    fig = plot(samples)
+                    plt.savefig(self.conf.gendir + '/%s.png' % str(global_step).zfill(3), bbox_inches='tight')
+                    plt.close(fig)
+
+                batch_xs, batch_ys = self.dataset.train.next_batch(self.conf.batch)
+                # Run training (1 batch)
+                batch_noise = np.random.uniform(-1., 1., [self.conf.batch, 100])
+
+                # Discriminator 최적화를 수행하고 Discriminator의 손실함수를 return합니다.
+                _, d_loss_print = self.sess.run([self.d_train_step, self.d_loss],
+                                                feed_dict={self.X: batch_xs, self.Z: batch_noise})
+
+                # Generator 최적화를 수행하고 Generator 손실함수를 return합니다.
+                _, g_loss_print = self.sess.run([self.g_train_step, self.g_loss], feed_dict={self.Z: batch_noise})
+                print("# Training   [{0}/{1}]       Currenct Batch Generative Loss: {2:0.5f} "
+                      " Currenct Batch Descriminitive Loss: {3:0.5f}".format(epoch + 1, global_step, g_loss_print,
+                                                                             d_loss_print))
+
+
+                if self.best_loss > (d_loss_print+g_loss_print):
+                    sum_d_g_loss = d_loss_print+g_loss_print
+                    print("# Save Model [{2}/{0}]   --> Best loss: {1:0.5f}".format(
+                        global_step, sum_d_g_loss, epoch + 1))
+                    self.save(global_step, sum_d_g_loss)
+                    self.best_loss = sum_d_g_loss
+                    self.best_gloval_step = global_step
+        return self.best_gloval_step, self.best_loss
+
     def evaluation(self):
         """
         This function evaluation from a test data.
@@ -435,6 +637,16 @@ class Model(object):
             return
         self.saver.restore(self.sess, model_path)
 
+def plot(samples):
+    fig = plt.figure(figsize=(8, 8))
+    gs = gridspec.GridSpec(8, 8)
+    gs.update(wspace=0.05, hspace=0.05)
+
+    for i, sample in enumerate(samples):
+        ax = plt.subplot(gs[i])
+        plt.axis('off')
+        plt.imshow(sample.reshape(28, 28))
+    return fig
 
 def imageprepare(argv, type_cnn):
     """
@@ -477,25 +689,29 @@ def imageprepare(argv, type_cnn):
 def configure():
     # training
     flags = tf.app.flags
-    flags.DEFINE_integer('training_epochs', 25, '# of step for training')
+    flags.DEFINE_integer('training_epochs', 500, '# of step for training')
     flags.DEFINE_integer('test_interval', 1000, '# of interval to test a model')
     flags.DEFINE_integer('summary_interval', 100, '# of step to save summary')
-    flags.DEFINE_float('learning_rate', 0.1, 'learning rate')
+    flags.DEFINE_float('learning_rate', 0.001, 'learning rate')
     flags.DEFINE_float('gpu', 1, 'gpu use :1, cpu :0')
     # data
     flags.DEFINE_integer('batch', 100, 'batch size')
     flags.DEFINE_integer('height', 28, 'height size')
     flags.DEFINE_integer('width', 28, 'width size')
     flags.DEFINE_integer('channel', 1, 'channel size')
+    flags.DEFINE_integer('num_latent_variable', 100, 'num_latent_variable')
     # Debug
     flags.DEFINE_string('logdir', './logdir', 'Log dir')
     flags.DEFINE_string('modeldir', './modeldir', 'Model dir')
+    flags.DEFINE_string('gendir', './gendir', 'Model dir')
+
     # network architecture
     flags.DEFINE_integer('class_num', 10, 'output class number')
     flags.DEFINE_string('mlp_hidden', '256,256,100,100', 'hidden_layer_number')
+    flags.DEFINE_string('GAN_hidden', '128', 'gan_hidden_layer_number')
     flags.DEFINE_string('cnn_filter', '4,8,16', 'hidden_layer_number')
-    flags.DEFINE_string('model_name', 'model_mlp_3', 'Choose one [model_mlp_1, model_mlp_3, model_cnn_1, model_cnn_3]')
-    flags.DEFINE_string('active_func', 'sigmoid', 'Choose one [sigmoid, relu]')
+    flags.DEFINE_string('model_name', 'model_GAN', 'Choose one [model_mlp_1, model_mlp_3, model_cnn_1, model_cnn_3, model_GAN]')
+    flags.DEFINE_string('active_func', 'relu', 'Choose one [sigmoid, relu]')
     flags.DEFINE_string('initial_type', 'random', 'Choose one [random, xavier]')
 
     # Run_Type
@@ -523,10 +739,13 @@ def main(_):
         if 'model_cnn' in conf.model_name:
             mnist = input_data.read_data_sets("MNIST_data/", one_hot=True, reshape=False)
         model.set_dataset(mnist)
-        best_gloval_step, best_val_acc = model.train()
-        tf.reset_default_graph()
-        model.reload(best_gloval_step, best_val_acc)
-        model.evaluation()
+        if 'model_GAN' in conf.model_name:
+            best_gloval_step, best_val_acc = model.gan_train()
+        else:
+            best_gloval_step, best_val_acc = model.train()
+            tf.reset_default_graph()
+            model.reload(best_gloval_step, best_val_acc)
+            model.evaluation()
 
     elif conf.run_type == 2:
         with tf.Session(config=tfconfig) as sess:
