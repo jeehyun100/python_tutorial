@@ -35,15 +35,72 @@ def max_pool(input, k, s, name='pool'):
     out = tf.nn.max_pool(input, ksize=[1, k, k, 1], strides=[1, s, s, 1], padding='SAME', name=name)
     return out
 
+#
+# @add_arg_scope
+# def inception_layer(conv_11_size, conv_33_reduce_size, conv_33_size,
+#                     conv_55_reduce_size, conv_55_size, pool_size,
+#                     layer_dict, inputs=None,
+#                     bn=False, wd=0, init_w=None,
+#                     pretrained_dict=None, trainable=True, is_training=True,
+#                     name='inception'):
+#
+# def max_pool(x, name, filter_height = 3, filter_width = 3,
+# 	stride = 2, padding = 'VALID'):
+#
+# 	"""Create a max pooling layer."""
+#
+# 	return tf.nn.max_pool(x, ksize = [1, filter_height, filter_width, 1],
+# 		strides = [1, stride, stride, 1], padding = padding, name = name)
+
+
+
 def inception_block(x, conv11_size, conv33_rsize, conv33_size, conv55_rsize, conv55_size, pool_size, name='incept'):
     ### Assignment ###
     ### Use conv2d and max_pool function
+
+    with tf.variable_scope(name) as scope:
+        #def conv2d(input, filters, kernel_size, strides=1, activation=tf.nn.relu, padding='SAME', name='conv'):
+        conv_1 = conv2d(x, conv11_size, kernel_size=1, name='{}_1x1'.format(name))
+
+        # conv_3_reduce = conv_layer(x, filter_height=1, filter_width=1,
+        #                            num_filters=conv_3_reduce_size, name='{}_3x3_reduce'.format(name))
+        conv_3_reduce = conv2d(x, conv33_rsize, kernel_size=1, name='{}_3x3_reduce'.format(name))
+
+        conv_3 = conv2d(conv_3_reduce, conv33_size, kernel_size=3, name='{}_3x3'.format(name))
+
+        conv_5_reduce = conv2d(x, conv55_rsize, kernel_size=1, name='{}_5x5_reduce'.format(name))
+
+        conv_5 = conv2d(conv_5_reduce, conv55_size, kernel_size = 5, name='{}_5x5'.format(name))
+
+        pool = max_pool(x, 3, 1, name='{}_pool'.format(name))
+        #pool = max_pool(x, stride =1, padding = 'SAME', name = '{}_pool'.format(name))
+
+        pool_proj = conv2d(pool, pool_size, kernel_size=1, name='{}_pool_proj'.format(name))
+
+        out = tf.concat([conv_1, conv_3, conv_5, pool_proj], axis=3, name='{}_concat'.format(name))
+
     return out
 
 def googlenet(x):
     ### Assignment ###
     ### Use cpmv2d, max_pool, inception_block, dens and dropout function
+    # 3, filter_width = 3,stride = 2
+    conv1 = conv2d(x, 64, kernel_size=5, strides=1, name='conv1')
+    pool1 = max_pool(conv1, 3, 2, name='pool1')
+
+    inception2a = inception_block(pool1, 64, 96, 128, 16, 32, 32, name='inception1a')
+    inception2b = inception_block(inception2a, 128, 128, 192, 32, 96, 64, name='inception1b')
+    pool2 = max_pool(inception2b,3, 2, name='pool2')
+    inception3a = inception_block(pool2, 192, 96, 208, 16, 48, 64, name='inception3a')
+    inception3b = inception_block(inception3a, 160, 112, 224, 24, 64, 64, name='inception3b')
+    gap = tf.nn.avg_pool(inception3b, ksize=[1, 6, 6, 1], strides=[1, 1, 1, 1], padding='VALID', name='gap')
+    gap_dropout = tf.nn.dropout(gap, keep_prob=keep_prob)
+    flatten = tf.layers.flatten(gap_dropout)
+    dense2 = dense(flatten, 10, name='fc4')
+
     return dense2
+
+
 
 epochs = 100
 learning_rate = 0.00001
@@ -54,6 +111,7 @@ dropout = 0.8
 # tf Graph input
 x = tf.placeholder(tf.float32, [None, 28, 28, 1])
 y = tf.placeholder(tf.int32, [None, 10])
+#hold_prob = tf.placeholder(tf.float32)
 # y_one_hot = tf.squeeze(tf.one_hot(y, 10), axis=1)
 
 keep_prob = tf.placeholder(tf.float32, [])  # dropout (keep probability)
