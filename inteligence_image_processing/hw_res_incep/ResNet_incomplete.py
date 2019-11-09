@@ -29,53 +29,52 @@ print("Test Set:       {} samples".format(len(X_test)))
 def conv2d(input, filters, kernel_size, strides=1, activation=tf.nn.relu, padding='SAME', name='conv'):
     with tf.variable_scope(name, reuse=False):
         out = tf.layers.conv2d(input, filters=filters, kernel_size=kernel_size, strides=strides, padding=padding,
-                         activation=activation, name=name)
+                         activation=activation)
     return out
 
 def dense(input, unit, activation=tf.nn.relu, name='dense'):
     with tf.variable_scope(name, reuse=False):
-        out = tf.layers.dense(input, unit, activation=activation, name=name)
+        out = tf.layers.flatten(input)
+        out = tf.layers.dense(out, unit, activation=activation, name=name)
     return out
 
 def max_pool(input, k, s, name='pool'):
     out = tf.nn.max_pool(input, ksize=[1, k, k, 1], strides=[1, s, s, 1], padding='SAME', name=name)
     return out
 
-def resblock(x_init, channels, is_training=True, use_bias=True, downsample=False, scope='resblock') :
-    with tf.variable_scope(scope) :
-
-        x = batch_norm(x_init, is_training, scope='batch_norm_0')
-        x = relu(x)
-
-        #def conv2d(input, filters, kernel_size, strides=1, activation=tf.nn.relu, padding='SAME', name='conv'):
-
-        if downsample :
-            x = conv2d(x, channels, kernel=3, stride=2, name='conv_0')
-            x_init = conv2d(x_init, channels, kernel=1, stride=2, name='conv_0')
-
-        else :
-            x = conv2d(x, channels, kernel=3, stride=1, name='conv_0')
-
-        x = batch_norm(x, is_training, scope='batch_norm_1')
-        x = relu(x)
-        x = conv2d(x, channels, kernel=3, stride=1, name='conv_1')
-
-
-
-        return x + x_init
+# def resblock(x_init, channels, is_training=True, use_bias=True, downsample=False, scope='resblock') :
+#     with tf.variable_scope(scope) :
+#
+#         x = batch_norm(x_init, is_training, scope='batch_norm_0')
+#         x = relu(x)
+#
+#         #def conv2d(input, filters, kernel_size, strides=1, activation=tf.nn.relu, padding='SAME', name='conv'):
+#
+#         if downsample :
+#             x = conv2d(x, channels, kernel=3, stride=2, name='conv_0')
+#             x_init = conv2d(x_init, channels, kernel=1, stride=2, name='conv_0')
+#
+#         else :
+#             x = conv2d(x, channels, kernel=3, stride=1, name='conv_0')
+#
+#         x = batch_norm(x, is_training, scope='batch_norm_1')
+#         x = relu(x)
+#         x = conv2d(x, channels, kernel=3, stride=1, name='conv_1')
+#
+#
+#
+#         return x + x_init
 
 def res_block(x, filter_num, kernel_size, strides, name='res_block', is_training=True, downsample=False, scope='resblock' ):
-    ### Assignment ###
-    ### Use conv2d function and residual variable
-    #return out stride1, kernel_size = 3
-    with tf.variable_scope(scope) :
+
+    with tf.variable_scope(scope):
 
         res_x = batch_norm(x, is_training, scope='batch_norm_0')
         res_x = relu(res_x)
 
         if downsample :
             res_x = conv2d(res_x, filter_num, kernel_size, strides=strides, name='conv_0')
-            x = conv2d(x, filter_num, kernel=1, stride=2, name='conv_init')
+            x = conv2d(res_x, filter_num, kernel=1, stride=2, name='conv_init')
 
         else :
             res_x = conv2d(res_x, filter_num, kernel_size, strides=strides, name='conv_0')
@@ -158,9 +157,9 @@ def batch_norm(x, is_training=True, scope='batch_norm'):
         # mean, var = tf.cond(phase_train,
         #                     mean_var_with_update,
         #                     lambda: (ema.average(batch_mean), ema.average(batch_var)))
-    normed = tf.layers.batch_normalization(x,
-                                        training=is_training,
-                                        name = scope)
+    with tf.variable_scope(scope):
+        normed = tf.layers.batch_normalization(x,
+                                            training=is_training)
     return normed
 
 def global_avg_pooling(x):
@@ -171,11 +170,11 @@ def relu(x):
     return tf.nn.relu(x)
 
 
-def res_net(x):
+def res_net(x, is_training=True, reuse = False):
     ### Assignment ###
     ### Use conv2d, res_block, max_pool, dense and other function
 
-    with tf.variable_scope("network"):
+    with tf.variable_scope("network", reuse=reuse):
 
         # if self.res_n < 50:
         #     residual_block = resblock
@@ -190,16 +189,16 @@ def res_net(x):
         label_dim = 10
 
         #conv2d(res_x, filter_num, kernel_size, strides=strides, name='conv_0')
-        x = conv2d(x, filter_num, 3, strides=1, name='conv')
+        x = conv2d(x, 32, 3, strides=1, name='conv')
 
         #res_block(x, filter_num, kernel_size, strides, name='res_block', is_training=True, downsample=False, scope='resblock' ):
     ### Assignment ###
 
         for i in range(residual_list[0]):
-            x = res_block(x, filter_num = filter_num, kernel_size = kernel_size, strides = strides, is_training=True, scope='resblock0_' + str(i))
+            x = res_block(x, filter_num = filter_num, kernel_size = kernel_size, strides = strides, is_training=is_training, scope='resblock0_' + str(i))
 
-        x = batch_norm(x, is_training = True, scope='batch_norm')
-        x = relu(x)
+        x = batch_norm(x, is_training=is_training, scope='batch_norm')
+        #x = relu(x)
 
         x = global_avg_pooling(x)
         x = dense(x, label_dim, name='logit')
@@ -207,70 +206,6 @@ def res_net(x):
     return x
 
 
-##################################################################################
-# Layer
-##################################################################################
-#
-#
-# def conv(x, channels, kernel=4, stride=2, padding='SAME', use_bias=True, scope='conv_0'):
-#     with tf.variable_scope(scope):
-#         x = tf.layers.conv2d(inputs=x, filters=channels,
-#                              kernel_size=kernel, kernel_initializer=weight_init,
-#                              kernel_regularizer=weight_regularizer,
-#                              strides=stride, use_bias=use_bias, padding=padding)
-#
-#         return x
-#
-# def fully_conneted(x, units, use_bias=True, scope='fully_0'):
-#     with tf.variable_scope(scope):
-#         x = flatten(x)
-#         x = tf.layers.dense(x, units=units, kernel_initializer=weight_init, kernel_regularizer=weight_regularizer, use_bias=use_bias)
-#
-#         return x
-#
-# def resblock(x_init, channels, is_training=True, use_bias=True, downsample=False, scope='resblock') :
-#     with tf.variable_scope(scope) :
-#
-#         x = batch_norm(x_init, is_training, scope='batch_norm_0')
-#         x = relu(x)
-#
-#
-#         if downsample :
-#             x = conv(x, channels, kernel=3, stride=2, use_bias=use_bias, scope='conv_0')
-#             x_init = conv(x_init, channels, kernel=1, stride=2, use_bias=use_bias, scope='conv_init')
-#
-#         else :
-#             x = conv(x, channels, kernel=3, stride=1, use_bias=use_bias, scope='conv_0')
-#
-#         x = batch_norm(x, is_training, scope='batch_norm_1')
-#         x = relu(x)
-#         x = conv(x, channels, kernel=3, stride=1, use_bias=use_bias, scope='conv_1')
-#
-#         return x + x_init
-#
-#
-# def bottle_resblock(x_init, channels, is_training=True, use_bias=True, downsample=False, scope='bottle_resblock') :
-#     with tf.variable_scope(scope) :
-#         x = batch_norm(x_init, is_training, scope='batch_norm_1x1_front')
-#         shortcut = relu(x)
-#
-#         x = conv(shortcut, channels, kernel=1, stride=1, use_bias=use_bias, scope='conv_1x1_front')
-#         x = batch_norm(x, is_training, scope='batch_norm_3x3')
-#         x = relu(x)
-#
-#         if downsample :
-#             x = conv(x, channels, kernel=3, stride=2, use_bias=use_bias, scope='conv_0')
-#             shortcut = conv(shortcut, channels*4, kernel=1, stride=2, use_bias=use_bias, scope='conv_init')
-#
-#         else :
-#             x = conv(x, channels, kernel=3, stride=1, use_bias=use_bias, scope='conv_0')
-#             shortcut = conv(shortcut, channels * 4, kernel=1, stride=1, use_bias=use_bias, scope='conv_init')
-#
-#         x = batch_norm(x, is_training, scope='batch_norm_1x1_back')
-#         x = relu(x)
-#         x = conv(x, channels*4, kernel=1, stride=1, use_bias=use_bias, scope='conv_1x1_back')
-#
-#         return x + shortcut
 
 
 
@@ -320,8 +255,8 @@ def get_residual_layer(res_n) :
 
 
 epochs = 100
-learning_rate = 0.00001
-batch_size = 64
+learning_rate = 0.001
+batch_size = 500
 dropout = 0.8
 
 
@@ -337,6 +272,7 @@ x_resize = tf.image.resize_images(x, [64, 64])
 
 # Construct model
 pred = res_net(x)
+test_pred = res_net(x, is_training=False, reuse=True)
 
 # Define loss and optimizer
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=pred, labels=y))
@@ -345,6 +281,16 @@ optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 # Evaluate model
 correct_pred = tf.equal(tf.argmax(pred, -1), tf.argmax(y, -1))
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+
+
+# Define loss and optimizer
+test_cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=test_pred, labels=y))
+#optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+
+# Evaluate model
+test_correct_pred = tf.equal(tf.argmax(test_pred, -1), tf.argmax(y, -1))
+test_accuracy = tf.reduce_mean(tf.cast(test_correct_pred, tf.float32))
+
 
 # Initializing the variables
 init = tf.initialize_all_variables()
